@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@storyblok/svelte": "7.3.2"
+  }
+}
