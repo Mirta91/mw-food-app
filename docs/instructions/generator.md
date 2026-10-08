@@ -14,3 +14,18 @@ repository; there is no publish step.
 - Do not add a `prepare` script to the root `package.json`. npm would install all dev
   dependencies and run it on every `npx` call. Git hooks are activated in `postinstall`.
 - After changing anything above, commit and run `pnpm verify:git-install`.
+
+## Templates
+
+- Layers apply in the order `templates/common`, `frameworks/<framework>`, `cms/<cms>`,
+  `combos/<cms>-<framework>`. A later layer replaces a whole file of an earlier one; there is no
+  partial patching. Put a file in the lowest layer it is the same for.
+- `pkg.json` and `pnpm-workspace.json` at a layer root are fragments: objects are deep-merged,
+  scalars and arrays of later layers replace earlier ones. They become `package.json` and
+  `pnpm-workspace.yaml`.
+- Store `.gitignore` as `_gitignore`.
+- Text files may use the tokens `__PROJECT_NAME__`, `__CMS__` and `__FRAMEWORK__` (display
+  labels). No other templating.
+- Pin template dependencies to exact versions. Bump them by hand and run `pnpm test:matrix`.
+- Templates are excluded from this repository's lint, format and type checks; `pnpm test:matrix`
+  validates them inside generated projects.
