@@ -40,28 +40,30 @@ These rules stay in this file. Do not move them into an instruction file.
 Tools are declared in `mise.toml`; pnpm is enforced through `devEngines` in `package.json`.
 This is a pnpm workspace orchestrated by Turborepo.
 
-| Command                                       | Purpose                                                                     |
-| --------------------------------------------- | --------------------------------------------------------------------------- |
-| `mise install`                                | Install pnpm and lychee                                                     |
-| `pnpm install`                                | Install dependencies and activate the git hooks in `.githooks/`             |
-| `pnpm build` / `dev` / `check-types` / `test` | Run the task in all packages through turbo                                  |
-| `pnpm test:watch`                             | Run tests in watch mode                                                     |
-| `pnpm lint` / `pnpm lint:fix`                 | Lint the whole repository with oxlint                                       |
-| `pnpm format` / `pnpm format:fix`             | Check or apply formatting with oxfmt                                        |
-| `pnpm check:docs`                             | Check dead links, anchors and the instruction link rules                    |
-| `pnpm check`                                  | Run lint, format, check-types, test and check:docs; runs as pre-commit hook |
+| Command                                       | Purpose                                                                                          |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `mise install`                                | Install pnpm and lychee                                                                          |
+| `pnpm install`                                | Install dependencies and activate the git hooks in `.githooks/`                                  |
+| `pnpm build` / `dev` / `check-types` / `test` | Run the task in all packages through turbo                                                       |
+| `pnpm test:watch`                             | Run tests in watch mode                                                                          |
+| `pnpm lint` / `pnpm lint:fix`                 | Lint the whole repository with oxlint                                                            |
+| `pnpm format` / `pnpm format:fix`             | Check or apply formatting with oxfmt                                                             |
+| `pnpm check:docs`                             | Check dead links, anchors and the instruction link rules                                         |
+| `pnpm check`                                  | Run lint, format, check-types, test, build, check:bundle and check:docs; runs as pre-commit hook |
+| `pnpm verify:git-install`                     | Check that the committed bundle runs from a git URL                                              |
 
 ## Layout
 
 - `apps/` — deployable applications.
 - `packages/` — shared libraries and configs.
+- `packages/create-cms-app/` — the generator; its `dist/` is committed.
 - `.agents/skills/` — agent skills, installed and locked through `skills-lock.json`.
   `.claude/skills/` symlinks into it. Do not edit installed skills here; change them at their
   source.
 - `docs/instructions/` — instruction files (see rules above).
 - `docs/specs/<n>-<kebab-name>/task.md` — specs written by the `define-spec` skill.
 - `scripts/` — repository tooling.
-- `.githooks/` — versioned git hooks, activated through the `prepare` script.
+- `.githooks/` — versioned git hooks, activated through the `postinstall` script.
 
 ## Conventions
 
@@ -84,3 +86,4 @@ user. If an item cannot be met, say which one and why instead of reporting the s
 - [Testing](docs/instructions/testing.md) — before writing, running or configuring tests
 - [Linting and formatting](docs/instructions/linting-and-formatting.md) — before changing lint or
   format rules, or when a lint or format check fails
+- [Generator](docs/instructions/generator.md) — before changing the generator, its templates or how it is distributed

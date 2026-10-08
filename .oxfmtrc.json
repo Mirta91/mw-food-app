@@ -1,4 +1,9 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": [".agents/**", "pnpm-lock.yaml"]
+  "ignorePatterns": [
+    ".agents/**",
+    "pnpm-lock.yaml",
+    "packages/create-cms-app/templates/**",
+    "packages/create-cms-app/dist/**"
+  ]
 }

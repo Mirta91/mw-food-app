@@ -4,6 +4,7 @@
   "categories": {
     "correctness": "error"
   },
+  "ignorePatterns": ["packages/create-cms-app/templates/**", "packages/create-cms-app/dist/**"],
   "rules": {},
   "env": {
     "builtin": true

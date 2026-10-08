@@ -1,9 +1,15 @@
 {
   "name": "cms-hackathon-setup",
   "private": true,
+  "bin": {
+    "create-cms-app": "packages/create-cms-app/dist/cli.mjs"
+  },
+  "files": [
+    "packages/create-cms-app/dist"
+  ],
   "type": "module",
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks",
+    "postinstall": "test -d .githooks && git config core.hooksPath .githooks || true",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "oxlint",
@@ -13,10 +19,12 @@
     "check-types": "turbo run check-types",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
-    "check": "turbo run lint format check-types test && pnpm check:docs",
+    "check": "turbo run lint format check-types test build && pnpm check:bundle && pnpm check:docs",
     "check:links": "lychee --offline --include-fragments --no-progress AGENTS.md \"docs/**/*.md\"",
     "check:instructions": "node scripts/check-instruction-links.mjs",
-    "check:docs": "pnpm check:links && pnpm check:instructions"
+    "check:docs": "pnpm check:links && pnpm check:instructions",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "verify:git-install": "sh packages/create-cms-app/scripts/verify-git-install.sh"
   },
   "devDependencies": {
     "oxfmt": "^0.72.0",
@@ -29,5 +37,8 @@
       "version": "^11.9.0",
       "onFail": "download"
     }
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

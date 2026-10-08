@@ -27,6 +27,9 @@ deprecation notices.
 - `check-types` and `test` depend on the `transit` task instead of `^check-types` / `^test`. No
   package defines a `transit` script; it only links each task to its dependencies' changes, so
   dependent packages re-run when a dependency changes while all packages still run in parallel.
+- `pnpm check` also runs `build` and `check:bundle`, because the generator's `dist/` is committed.
+  Its package `turbo.json` extends the root and overrides `build.inputs` so tracked `dist/` files
+  do not count as inputs (arrays replace, they do not merge). See the generator instructions.
 - `pnpm check:docs` stays a plain root script, not a turbo task. It checks repository-wide files,
   not packages.
 
