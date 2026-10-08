@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@storyblok/nuxt": "11.2.1"
+    "storyblok-js-client": "7.7.7"
   }
 }

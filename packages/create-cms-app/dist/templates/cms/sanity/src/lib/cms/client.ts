@@ -6,8 +6,8 @@ export const apiVersion = "2026-10-01";
 
 export const exampleQuery = `*[_type == "example"] | order(_createdAt asc)[0]{title, body}`;
 
-// The subset of @sanity/client that the app uses; bindings (next-sanity, @nuxtjs/sanity,
-// @sanity/astro) return compatible clients.
+// The subset of @sanity/client that the app uses; bindings (next-sanity, @sanity/astro) return
+// compatible clients.
 export interface SanityFetcher {
   fetch<T>(query: string): Promise<T>;
 }
