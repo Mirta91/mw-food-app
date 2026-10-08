@@ -1,0 +1,23 @@
+---
+// The client is created here per request from process.env instead of through @sanity/astro:
+// the integration's options live in astro.config.ts, which runs during `pnpm build`, so a later
+// .env change would be ignored by `pnpm start`.
+import { createClient } from "@sanity/client";
+import CmsStatus from "../components/CmsStatus.astro";
+import Layout from "../layouts/Layout.astro";
+import { apiVersion, fetchExample, requiredEnv } from "../lib/cms/client";
+import { loadCmsState, missingEnv } from "../lib/cms/state";
+
+const state = await loadCmsState(missingEnv(requiredEnv, process.env), () =>
+  fetchExample(
+    createClient({
+      projectId: process.env.SANITY_PROJECT_ID,
+      dataset: process.env.SANITY_DATASET,
+      apiVersion,
+      useCdn: true,
+    }),
+  ),
+);
+---
+
+<Layout><CmsStatus state={state} /></Layout>

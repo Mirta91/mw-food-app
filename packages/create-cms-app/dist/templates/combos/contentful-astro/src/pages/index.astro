@@ -1,0 +1,10 @@
+---
+import CmsStatus from "../components/CmsStatus.astro";
+import Layout from "../layouts/Layout.astro";
+import { createExampleLoader, requiredEnv } from "../lib/cms/client";
+import { loadCmsState, missingEnv } from "../lib/cms/state";
+
+const state = await loadCmsState(missingEnv(requiredEnv, process.env), createExampleLoader(process.env));
+---
+
+<Layout><CmsStatus state={state} /></Layout>
