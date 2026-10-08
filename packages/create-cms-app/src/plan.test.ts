@@ -59,10 +59,15 @@ describe("planProject", () => {
   it("orders package.json keys and dependencies like oxfmt", async () => {
     await writeTree(templates, {
       "common/pkg.json": JSON.stringify({
+        custom: 1,
+        type: "module",
         name: "__PROJECT_NAME__",
         devDependencies: { vitest: "5.0.3" },
+        private: true,
         engines: { node: ">=24" },
+        other: 2,
         devEngines: {},
+        version: "0.0.0",
       }),
       "frameworks/next/pkg.json": JSON.stringify({
         devDependencies: { "@types/react": "19.3.0" },
@@ -74,11 +79,16 @@ describe("planProject", () => {
     const pkg = JSON.parse(text(await planProject(templates, choices), "package.json"));
     expect(Object.keys(pkg)).toEqual([
       "name",
+      "version",
+      "private",
+      "type",
       "scripts",
       "dependencies",
       "devDependencies",
       "devEngines",
       "engines",
+      "custom",
+      "other",
     ]);
     expect(Object.keys(pkg.dependencies)).toEqual(["next", "next-sanity"]);
     expect(Object.keys(pkg.devDependencies)).toEqual(["@types/react", "vitest"]);

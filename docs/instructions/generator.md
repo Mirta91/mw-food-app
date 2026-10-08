@@ -29,6 +29,10 @@ repository; there is no publish step.
 - Pin template dependencies to exact versions. Bump them by hand and run `pnpm test:matrix`.
 - Templates are excluded from this repository's lint, format and type checks; `pnpm test:matrix`
   validates them inside generated projects.
+- The generator writes `package.json` in oxfmt's order: top-level keys by `PKG_KEY_ORDER` in
+  `src/plan.ts`, dependency maps sorted by name. When a template adds another top-level key, add
+  it to `PKG_KEY_ORDER` at oxfmt's position.
+- Generated projects exclude `pnpm-workspace.yaml` from oxfmt, because `pnpm install` rewrites it.
 
 ## Matrix test
 
