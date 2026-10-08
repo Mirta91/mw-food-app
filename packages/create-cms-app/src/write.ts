@@ -52,6 +52,7 @@ export async function writeProject(
   const temp = await mkdtemp(join(dirname(target), `.${basename(target)}.tmp-`));
   let symlinkFallback = false;
   try {
+    await chmod(temp, 0o777 & ~process.umask());
     for (const entry of entries) {
       if (entry.kind !== "file") continue;
       const file = join(temp, ...entry.path.split("/"));

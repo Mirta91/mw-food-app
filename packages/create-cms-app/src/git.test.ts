@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { type Exec, initRepository } from "./git.ts";
 import { makeTempDir } from "./test-helpers.ts";
 
@@ -19,6 +19,9 @@ function recordingExec(fail?: (args: string[]) => Error | undefined): {
 }
 
 describe("initRepository", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
   it("initializes, stages everything and commits", async () => {
     const { exec, calls } = recordingExec();
     expect(await initRepository("/project", exec)).toEqual({ status: "committed" });
@@ -55,12 +58,13 @@ describe("initRepository", () => {
     vi.stubEnv("GIT_AUTHOR_EMAIL", "test@example.invalid");
     vi.stubEnv("GIT_COMMITTER_NAME", "Test");
     vi.stubEnv("GIT_COMMITTER_EMAIL", "test@example.invalid");
+    vi.stubEnv("GIT_CONFIG_GLOBAL", "/dev/null");
+    vi.stubEnv("GIT_CONFIG_NOSYSTEM", "1");
     const dir = await makeTempDir();
     await writeFile(join(dir, "README.md"), "hi\n");
     expect(await initRepository(dir)).toEqual({ status: "committed" });
     expect(
       execFileSync("git", ["rev-list", "--count", "HEAD"], { cwd: dir, encoding: "utf8" }).trim(),
     ).toBe("1");
-    vi.unstubAllEnvs();
   });
 });

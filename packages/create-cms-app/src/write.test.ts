@@ -73,4 +73,10 @@ describe("writeProject", () => {
     expect(result.symlinkFallback).toBe(true);
     expect(await readFile(join(target, "CLAUDE.md"), "utf8")).toBe("# agents\n");
   });
+
+  it("creates target directory with normal mode (respecting umask)", async () => {
+    await writeProject(target, entries);
+    const mode = (await stat(target)).mode & 0o777;
+    expect(mode).toBe(0o777 & ~process.umask());
+  });
 });
