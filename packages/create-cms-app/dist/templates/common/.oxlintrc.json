@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    ".next/**",
+    ".nuxt/**",
+    ".output/**",
+    ".astro/**",
+    ".svelte-kit/**",
+    "dist/**",
+    "build/**",
+    "cms/.sanity/**",
+    "cms/dist/**",
+    "playwright-report/**",
+    "test-results/**"
+  ]
+}
