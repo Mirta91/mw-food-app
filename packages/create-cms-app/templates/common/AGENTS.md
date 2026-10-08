@@ -33,7 +33,7 @@ These rules stay in this file. Do not move them into an instruction file.
 
 ## Project
 
-**PROJECT_NAME** is a **FRAMEWORK** app that loads its content from **CMS**.
+`__PROJECT_NAME__` is a `__FRAMEWORK__` app that loads its content from `__CMS__`.
 
 ## Tools and commands
 
