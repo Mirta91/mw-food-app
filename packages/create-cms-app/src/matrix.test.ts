@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { checkDocs } from "../templates/common/scripts/check-docs.ts";
@@ -15,6 +15,7 @@ const REQUIRED = [
   ".oxfmtrc.json",
   ".oxlintrc.json",
   "AGENTS.md",
+  "README.md",
   "docs/instructions/cms.md",
   "docs/instructions/framework.md",
   "docs/instructions/linting-and-formatting.md",
@@ -137,10 +138,23 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
       for (const name of names) expect(text(all, ".env.example")).toContain(`${name}=`);
     });
 
+    it("documents every .env.example variable and every cms script in the README", async () => {
+      const all = await entries();
+      const readme = text(all, "README.md");
+      for (const name of text(all, ".env.example").match(/^[A-Z_]+(?==)/gm) ?? [])
+        expect(readme, name).toContain(`\`${name}\``);
+      const scripts = Object.keys(JSON.parse(text(all, "package.json")).scripts);
+      for (const script of scripts.filter((name) => name.startsWith("cms:")))
+        expect(readme, script).toContain(`pnpm ${script}`);
+    });
+
     it("passes check-docs when written", async () => {
       const target = join(await makeTempDir(), id);
       await writeProject(target, await entries());
       expect(checkDocs(target).errors).toEqual([]);
+      const readme = await readFile(join(target, "README.md"), "utf8");
+      for (const [, link] of readme.matchAll(/\]\(([^)#:]+)\)/g))
+        await expect(access(join(target, link ?? "")), link).resolves.toBeUndefined();
       expect(await readFile(join(target, "CLAUDE.md"), "utf8")).toBe(
         await readFile(join(target, "AGENTS.md"), "utf8"),
       );

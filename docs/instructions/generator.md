@@ -36,6 +36,11 @@ repository; there is no publish step.
   integration options for CMS credentials, so `pnpm start` honours `.env`. Framework-specific
   details live in each `framework.md`.
 - Generated projects exclude `pnpm-workspace.yaml` from oxfmt, because `pnpm install` rewrites it.
+- Every generated project has a `README.md` for people: requirements, getting started, where to
+  find each `.env` value, commands, and pointers to `AGENTS.md` and `docs/instructions/`. It lives
+  in the CMS layer because the setup steps are CMS-specific; keep it in step with `.env.example`
+  and the `cms:*` scripts (`src/matrix.test.ts` checks both). Template files are not formatted by
+  this repository, so run oxfmt on a generated copy after editing and keep the tokens intact.
 
 ## Matrix test
 
