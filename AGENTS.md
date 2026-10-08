@@ -33,7 +33,7 @@ These rules stay in this file. Do not move them into an instruction file.
 
 ## Project
 
-<!-- TODO: one paragraph on what this project is and who it is for. -->
+This repository builds create-cms-app, a generator for agent-ready CMS projects used at hackathons. See packages/create-cms-app/README.md.
 
 ## Tools and commands
 

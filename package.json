@@ -25,7 +25,7 @@
     "check:instructions": "node scripts/check-instruction-links.mjs",
     "check:docs": "pnpm check:links && pnpm check:instructions",
     "check:bundle": "node scripts/check-bundle.mjs",
-    "verify:git-install": "sh packages/create-cms-app/scripts/verify-git-install.sh"
+    "verify:git-install": "VERIFY_TEMPLATE_FILES='common/.githooks/pre-commit common/_gitignore common/.oxlintrc.json cms/sanity/.env.example' sh packages/create-cms-app/scripts/verify-git-install.sh"
   },
   "devDependencies": {
     "oxfmt": "^0.72.0",

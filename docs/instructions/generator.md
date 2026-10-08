@@ -42,3 +42,7 @@ repository; there is no publish step.
 - Fix templates, never a generated copy. `--keep` leaves the generated projects for inspection.
 - Every route renders `data-cms-state` through `loadCmsState()` and `describeCmsState()` from
   `src/lib/cms/state.ts`; the smoke test depends on it.
+- `src/matrix.test.ts` runs in `pnpm check` without network: it plans all combinations and checks
+  required and forbidden files, `package.json` and docs. Update its snapshots with
+  `pnpm --filter @cms-hackathon-setup/create-cms-app test -u` only after reviewing the diff.
+- After changing a CMS layer, run the manual check in the generator README for that CMS.

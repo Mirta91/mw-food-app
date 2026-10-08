@@ -1,0 +1,657 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`contentful-astro > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@astrojs/node": "11.1.7",
+    "astro": "7.3.7",
+    "contentful": "11.12.10",
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "contentful-management": "12.19.0",
+    "contentful-migration": "5.1.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "contentful-astro",
+  "private": true,
+  "scripts": {
+    "build": "astro build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "astro check",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "astro dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env dist/server/entry.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`contentful-next > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "contentful": "11.12.10",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "contentful-management": "12.19.0",
+    "contentful-migration": "5.1.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "contentful-next",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "next typegen && tsc --noEmit",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "next dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "next start",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`contentful-nuxt > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "contentful": "11.12.10",
+    "nuxt": "4.6.0",
+    "vue": "3.5.43",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "contentful-management": "12.19.0",
+    "contentful-migration": "5.1.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+    "vue-tsc": "3.3.12",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "contentful-nuxt",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "nuxt typecheck",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "nuxt dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "postinstall": "nuxt prepare",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env .output/server/index.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`contentful-sveltekit > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "contentful": "11.12.10",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@sveltejs/adapter-node": "6.0.0",
+    "@sveltejs/kit": "3.0.1",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@types/node": "24.19.1",
+    "contentful-management": "12.19.0",
+    "contentful-migration": "5.1.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.6",
+    "typescript": "6.0.3",
+    "vite": "8.3.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "contentful-sveltekit",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "vite dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env build",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`sanity-astro > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@astrojs/node": "11.1.7",
+    "@sanity/client": "8.9.0",
+    "astro": "7.3.7",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.18.0",
+    "styled-components": "6.5.3",
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "sanity-astro",
+  "private": true,
+  "scripts": {
+    "build": "astro build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "astro check",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:dev": "cd cms && sanity dev",
+    "cms:migrate": "cd cms && sanity migration run 001-create-example --no-dry-run",
+    "dev": "astro dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env dist/server/entry.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`sanity-next > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "next": "16.4.0",
+    "next-sanity": "13.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.18.0",
+    "styled-components": "6.5.3",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "sanity-next",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "next typegen && tsc --noEmit",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:dev": "cd cms && sanity dev",
+    "cms:migrate": "cd cms && sanity migration run 001-create-example --no-dry-run",
+    "dev": "next dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "next start",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`sanity-nuxt > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@sanity/client": "8.9.0",
+    "nuxt": "4.6.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.18.0",
+    "styled-components": "6.5.3",
+    "vue": "3.5.43",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+    "vue-tsc": "3.3.12",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "sanity-nuxt",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "nuxt typecheck",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:dev": "cd cms && sanity dev",
+    "cms:migrate": "cd cms && sanity migration run 001-create-example --no-dry-run",
+    "dev": "nuxt dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "postinstall": "nuxt prepare",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env .output/server/index.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`sanity-sveltekit > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@sanity/client": "8.9.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.18.0",
+    "styled-components": "6.5.3",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@sveltejs/adapter-node": "6.0.0",
+    "@sveltejs/kit": "3.0.1",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@types/node": "24.19.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.6",
+    "typescript": "6.0.3",
+    "vite": "8.3.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "sanity-sveltekit",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:dev": "cd cms && sanity dev",
+    "cms:migrate": "cd cms && sanity migration run 001-create-example --no-dry-run",
+    "dev": "vite dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env build",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`storyblok-astro > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@astrojs/node": "11.1.7",
+    "astro": "7.3.7",
+    "storyblok-js-client": "7.7.7",
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "storyblok-astro",
+  "private": true,
+  "scripts": {
+    "build": "astro build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "astro check",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "astro dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env dist/server/entry.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`storyblok-next > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@storyblok/react": "7.3.1",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "storyblok-next",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "next typegen && tsc --noEmit",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "next dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "next start",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`storyblok-nuxt > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "nuxt": "4.6.0",
+    "storyblok-js-client": "7.7.7",
+    "vue": "3.5.43",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+    "vue-tsc": "3.3.12",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "storyblok-nuxt",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "nuxt typecheck",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "nuxt dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "postinstall": "nuxt prepare",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env .output/server/index.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
+
+exports[`storyblok-sveltekit > has a complete package.json with exact versions 1`] = `
+{
+  "dependencies": {
+    "@storyblok/svelte": "7.3.2",
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@sveltejs/adapter-node": "6.0.0",
+    "@sveltejs/kit": "3.0.1",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@types/node": "24.19.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.6",
+    "typescript": "6.0.3",
+    "vite": "8.3.3",
+    "vitest": "5.0.3",
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "download",
+      "version": "^11.28.0",
+    },
+  },
+  "engines": {
+    "node": ">=24",
+  },
+  "name": "storyblok-sveltekit",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "check-types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:docs": "node scripts/check-docs.ts",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts",
+    "dev": "vite dev",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "start": "node --env-file-if-exists=.env build",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:watch": "vitest --watch",
+  },
+  "type": "module",
+  "version": "0.0.0",
+}
+`;
