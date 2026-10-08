@@ -29,6 +29,13 @@ describe("loadCmsState", () => {
     });
     expect(state).toEqual({ kind: "error", message: "Unauthorized" });
   });
+
+  it("uses the message of a rejected plain object", async () => {
+    const state = await loadCmsState([], () =>
+      Promise.reject({ message: "Unauthorized", status: 401 }),
+    );
+    expect(state).toEqual({ kind: "error", message: "Unauthorized" });
+  });
 });
 
 describe("describeCmsState", () => {

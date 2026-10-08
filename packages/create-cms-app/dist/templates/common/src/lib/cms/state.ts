@@ -26,8 +26,17 @@ export async function loadCmsState(
     const example = await load();
     return example ? { kind: "example", example } : { kind: "empty" };
   } catch (error) {
-    return { kind: "error", message: error instanceof Error ? error.message : String(error) };
+    return { kind: "error", message: errorMessage(error) };
   }
+}
+
+// Some SDKs (storyblok-js-client) reject with plain objects that carry a message.
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "object" && error !== null && "message" in error) {
+    return String(error.message);
+  }
+  return String(error);
 }
 
 export function describeCmsState(state: CmsState): { title: string; detail: string } {
