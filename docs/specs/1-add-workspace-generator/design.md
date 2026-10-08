@@ -4,15 +4,15 @@ Design for [task.md](task.md). The task defines what is built; this file defines
 
 ## Decisions
 
-| Topic               | Decision                                                                                                   |
-| ------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Distribution        | Committed, self-contained bundle in root `dist/`, exposed through `bin` in the root `package.json`.        |
-| Demo route          | One idiomatic route file per CMS × framework combination (12 files).                                       |
-| CMS integration     | Official framework bindings wherever they exist; plain SDK where none exist (Contentful).                  |
-| Layer composition   | Ordered layers, later layer replaces whole files, `package.json` fragments are deep-merged.                |
-| Matrix test         | Offline snapshot matrix inside `pnpm check`; full install-and-check matrix as separate `pnpm test:matrix`. |
-| CI                  | Not part of this spec. `pnpm test:matrix` runs locally.                                                    |
-| Design doc location | Next to the task, following this repository's spec layout.                                                 |
+| Topic               | Decision                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Distribution        | Committed, self-contained bundle in the package's `dist/`, exposed through `bin` in the root `package.json`. |
+| Demo route          | One idiomatic route file per CMS × framework combination (12 files).                                         |
+| CMS integration     | Official framework bindings wherever they exist; plain SDK where none exist (Contentful).                    |
+| Layer composition   | Ordered layers, later layer replaces whole files, `package.json` fragments are deep-merged.                  |
+| Matrix test         | Offline snapshot matrix inside `pnpm check`; full install-and-check matrix as separate `pnpm test:matrix`.   |
+| CI                  | Not part of this spec. `pnpm test:matrix` runs locally.                                                      |
+| Design doc location | Next to the task, following this repository's spec layout.                                                   |
 
 ### Why a committed bundle
 
@@ -22,6 +22,18 @@ strip TypeScript types inside `node_modules`, so a `.ts` entry cannot run direct
 `prepare` script at install time is fragile: pnpm blocks dependency lifecycle scripts by default,
 every run would install dev dependencies, and the root `prepare` already configures git hooks.
 A committed bundle with all dependencies inlined has no install-time build and installs fast.
+
+### Findings from planning
+
+- npm installs all dev dependencies of a git dependency and runs its `prepare` whenever the
+  package defines `prepare`. The root `prepare` therefore moves to a guarded `postinstall`.
+- pnpm 11 fails `pnpm install` on dependency build scripts that are not approved through
+  `allowBuilds` in `pnpm-workspace.yaml`. This repository and every generated project need it.
+- The root `.gitignore` ignores `dist/` and turbo counts tracked files as build inputs. The
+  committed bundle needs a gitignore exception and explicit `build.inputs`.
+- `svelte-check` and `@astrojs/check` support TypeScript 5 and 6 only, so templates pin
+  TypeScript 6. `@sanity/sveltekit` supports SvelteKit 2 only, so Sanity on SvelteKit 3 uses the
+  plain `@sanity/client`.
 
 ## Package layout
 
@@ -45,25 +57,27 @@ packages/create-cms-app/            # final name is an open question in task.md
     combos/{sanity,contentful,storyblok}-{next,nuxt,astro,sveltekit}/
                                     # route, client wiring, framework config overrides,
                                     # client unit test where the binding differs
-  test/                             # unit tests and snapshot matrix
   scripts/test-matrix.ts            # full matrix, filterable by combination
-dist/create-cms-app.mjs             # committed bundle
-dist/templates/**                   # copied templates
+  dist/cli.mjs                      # committed bundle
+  dist/templates/**                 # copied templates
 ```
 
-- The root `package.json` gains `"bin": { "<name>": "dist/create-cms-app.mjs" }`.
-- The bundle is built with tsdown or esbuild and inlines every dependency, so it has no runtime
+Unit tests sit next to the code they test, following this repository's testing rules.
+
+- The root `package.json` gains `"bin": { "<name>": "packages/create-cms-app/dist/cli.mjs" }`
+  and `"files": ["packages/create-cms-app/dist"]`, so a git install packs only the bundle.
+- The bundle is built with esbuild and inlines every dependency, so it has no runtime
   dependencies.
-- **Freshness guard:** `pnpm check` rebuilds the bundle and fails if `git diff --exit-code dist/`
-  reports changes. The pre-commit hook therefore keeps the committed bundle in sync with the
-  source.
-- **Root `prepare` guard:** npm runs `prepare` when it installs a git dependency. The root
-  `prepare` must do nothing outside this repository's working tree (for example, only run
-  `git config core.hooksPath .githooks` when `.githooks/` exists and the directory is the
-  repository top level).
-- **Template file names:** `package.json` fragments are stored as `pkg.json` so that the pnpm
-  workspace and other tooling do not treat template folders as packages. `.gitignore` is stored
-  as `_gitignore` and renamed on write.
+- **Freshness guard:** `pnpm check` rebuilds the bundle and fails if `dist/` differs from the git
+  index or has untracked files. The pre-commit hook therefore keeps the committed bundle in sync
+  with the source.
+- **Root hook activation:** the root `prepare` becomes
+  `postinstall: test -d .githooks && git config core.hooksPath .githooks || true`. In a git
+  install `.githooks/` is not packed, so it does nothing.
+- **Template file names:** `package.json` fragments are stored as `pkg.json` and
+  `pnpm-workspace.yaml` fragments as `pnpm-workspace.json`, both deep-merged across layers, so
+  that the pnpm workspace and other tooling do not treat template folders as packages.
+  `.gitignore` is stored as `_gitignore` and renamed on write.
 - Templates are excluded from root lint, format and type checks. They are validated through the
   matrix test.
 
@@ -80,7 +94,8 @@ dist/templates/**                   # copied templates
 3. **Plan** (`plan.ts`, pure): walk the layers `common → frameworks/<fw> → cms/<cms> →
    combos/<cms>-<fw>` and build a map from relative path to entry; a later layer replaces an
    earlier one. `pkg.json` fragments are deep-merged: objects merge, scalars take the later value,
-   arrays are replaced. The token `__PROJECT_NAME__` is replaced in text files. `CLAUDE.md` is a
+   arrays are replaced. The tokens `__PROJECT_NAME__`, `__CMS__` and `__FRAMEWORK__` (display
+   labels) are replaced in text files. `CLAUDE.md` is a
    symlink entry pointing to `AGENTS.md`.
 4. **Write** (`write.ts`): write into a sibling temporary directory (`.<name>.tmp-<random>`), then
    rename it to the target. On failure the temporary directory is removed and the target is left
@@ -107,7 +122,7 @@ developer mode), copy `AGENTS.md` instead and print a warning.
 <name>/
   AGENTS.md
   CLAUDE.md -> AGENTS.md
-  docs/instructions/{testing,linting-and-formatting,cms}.md
+  docs/instructions/{testing,linting-and-formatting,framework,cms}.md
   scripts/check-docs.ts             # run with node, using native type stripping
   .githooks/pre-commit              # runs pnpm check
   cms/                              # schema as code, example type, migration
@@ -115,8 +130,11 @@ developer mode), copy `AGENTS.md` instead and print a warning.
   tests/unit/cms-client.test.ts
   tests/e2e/smoke.spec.ts
   .env.example  .gitignore  .oxlintrc.json  .oxfmtrc.json
-  tsconfig.json  vitest.config.ts  playwright.config.ts  package.json
+  tsconfig.json  vitest.config.ts  playwright.config.ts  package.json  pnpm-workspace.yaml
 ```
+
+`pnpm-workspace.yaml` holds only settings (`allowBuilds`); it also makes the project its own pnpm
+root when generated inside another workspace.
 
 ### Scripts
 
