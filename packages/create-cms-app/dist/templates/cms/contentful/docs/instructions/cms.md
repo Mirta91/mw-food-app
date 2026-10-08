@@ -1,7 +1,8 @@
 # Contentful
 
 - Content types are schema as code in `cms/content-types/`. Change them only through a new
-  migration in `cms/migrations/<nnn>-<name>.ts`, applied in order by `cms/migrate.ts`.
+  migration in `cms/migrations/<nnn>-<name>.ts` and call it from `cms/migrate.ts`. The check
+  that the example content type already exists belongs to migration 001.
 - `pnpm cms:migrate` needs `CONTENTFUL_SPACE_ID` and `CONTENTFUL_MANAGEMENT_TOKEN` in `.env`.
   It is safe to re-run.
 - The app reads content through `src/lib/cms/client.ts` with the delivery token. Keep queries

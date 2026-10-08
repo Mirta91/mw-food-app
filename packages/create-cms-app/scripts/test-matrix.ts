@@ -89,8 +89,11 @@ async function runCombo(combo: Combo, index: number, work: string): Promise<Outc
     };
     const result = await generate({ name: id, ...combo }, dir, sourceTemplatesDir, gitExec);
     if (result.git.status !== "committed") throw new Error(`generate (git: ${result.git.status})`);
-    await step("one initial commit", "git", ["rev-list", "--count", "HEAD"], (out) =>
-      out.trim().endsWith("1"),
+    await step(
+      "one initial commit",
+      "git",
+      ["rev-list", "--count", "HEAD"],
+      (out) => out.trim().split("\n").at(-1) === "1",
     );
     await step("pnpm install", "pnpm", ["install"]);
     await step("playwright install", "pnpm", ["exec", "playwright", "install", "chromium"]);

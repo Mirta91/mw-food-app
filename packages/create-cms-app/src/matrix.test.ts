@@ -132,8 +132,9 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
       const all = await entries();
       const required =
         /requiredEnv = \[([^\]]*)\]/.exec(text(all, "src/lib/cms/client.ts"))?.[1] ?? "";
-      for (const name of required.match(/[A-Z_]+/g) ?? [])
-        expect(text(all, ".env.example")).toContain(`${name}=`);
+      const names = required.match(/[A-Z_]+/g) ?? [];
+      expect(names).not.toHaveLength(0);
+      for (const name of names) expect(text(all, ".env.example")).toContain(`${name}=`);
     });
 
     it("passes check-docs when written", async () => {
