@@ -10,6 +10,9 @@ oxlint lints and oxfmt formats the whole repository from the root. Configuration
   rule inline without a comment saying why.
 - Rule or option changes go into the root config files. Add a nested config in a package only when
   that package needs different rules, and say why in this file.
+- The root `lint` and `format` scripts pass `-c` explicitly: without it oxlint and oxfmt did not
+  apply `ignorePatterns`, so bare `oxlint` or `oxfmt` would touch
+  `packages/create-cms-app/templates/**` and `dist/**`.
 - oxfmt also formats Markdown and JSON, including `AGENTS.md` and instruction files.
 - `.agents/` is excluded from formatting because its skills are installed from another source.
   Keep generated or installed files in `ignorePatterns` of `.oxfmtrc.json`.

@@ -32,6 +32,9 @@ repository; there is no publish step.
 - The generator writes `package.json` in oxfmt's order: top-level keys by `PKG_KEY_ORDER` in
   `src/plan.ts`, dependency maps sorted by name. When a template adds another top-level key, add
   it to `PKG_KEY_ORDER` at oxfmt's position.
+- Templates create CMS clients per request from runtime env. Do not use build-time framework
+  integration options for CMS credentials, so `pnpm start` honours `.env`. Framework-specific
+  details live in each `framework.md`.
 - Generated projects exclude `pnpm-workspace.yaml` from oxfmt, because `pnpm install` rewrites it.
 
 ## Matrix test

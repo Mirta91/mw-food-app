@@ -245,3 +245,17 @@ if any combination fails.
 Before the implementation tasks, verify with a local bare repository (`file://` URL) that
 `npx git+file://…` and `pnpm dlx git+file://…` run the committed bundle, and that the root
 `prepare` guard does not fail or modify anything during the install.
+
+## Deviations after implementation
+
+- Plain per-request clients replace the CMS bindings `@nuxtjs/sanity`, `@sanity/astro`,
+  `@storyblok/nuxt` and `@storyblok/astro`: Nuxt and Astro use `@sanity/client` and
+  `storyblok-js-client` 7.7.7. The bindings baked credentials into the build through module
+  options, so `pnpm start` ignored `.env`. Per-request clients read runtime env.
+- SvelteKit 3.0.1 has no `svelte.config`; configuration lives in `vite.config.ts`. Private env
+  comes from `$app/env/private` with variables declared in `src/env.ts`, and shared code is
+  imported by relative path because `$lib` is gone.
+- The generator writes `package.json` in oxfmt's key order (`PKG_KEY_ORDER` in `src/plan.ts`).
+- The root `lint` and `format` scripts pass `-c`, because oxlint and oxfmt otherwise did not apply
+  `ignorePatterns`.
+- `check:docs` classifies instruction links in `AGENTS.md` by list position, not by anchor.
