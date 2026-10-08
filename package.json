@@ -1,23 +1,33 @@
 {
-  "name": "main",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "cms-hackathon-setup",
+  "private": true,
+  "type": "module",
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "check-types": "turbo run check-types",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "check": "turbo run lint format check-types test && pnpm check:docs",
     "check:links": "lychee --offline --include-fragments --no-progress AGENTS.md \"docs/**/*.md\"",
     "check:instructions": "node scripts/check-instruction-links.mjs",
     "check:docs": "pnpm check:links && pnpm check:instructions"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "devDependencies": {
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
+    "turbo": "^2.11.7"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "^11.9.0",
       "onFail": "download"
     }
-  },
-  "type": "module"
+  }
 }

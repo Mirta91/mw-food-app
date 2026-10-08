@@ -1,0 +1,6 @@
+packages:
+  - apps/*
+  - packages/*
+
+catalog:
+  vitest: ^5.0.3
