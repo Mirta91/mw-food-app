@@ -1,0 +1,23 @@
+{
+  "name": "main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
+    "check:links": "lychee --offline --include-fragments --no-progress AGENTS.md \"docs/**/*.md\"",
+    "check:instructions": "node scripts/check-instruction-links.mjs",
+    "check:docs": "pnpm check:links && pnpm check:instructions"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.9.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module"
+}
