@@ -80,6 +80,32 @@ describe("checkDocs", () => {
     ]);
   });
 
+  it("accepts an anchored list entry", async () => {
+    await writeTree(root, {
+      "AGENTS.md": AGENTS.replace("testing.md) —", "testing.md#rules) —"),
+    });
+    expect(checkDocs(root).errors).toEqual([]);
+  });
+
+  it("fails on a plain and an anchored list entry for the same file", async () => {
+    await writeTree(root, {
+      "AGENTS.md": `${AGENTS}- [Testing rules](docs/instructions/testing.md#rules) — again\n`,
+    });
+    expect(checkDocs(root).errors).toEqual([
+      "AGENTS.md: docs/instructions/testing.md is linked 2 times, allowed once",
+    ]);
+  });
+
+  it("allows a plain prose link next to the list entry", async () => {
+    await writeTree(root, {
+      "AGENTS.md": AGENTS.replace(
+        "See [the rules]",
+        "See [testing](docs/instructions/testing.md), [the rules]",
+      ),
+    });
+    expect(checkDocs(root).errors).toEqual([]);
+  });
+
   it("warns on links between instruction files and counts them as reachable", async () => {
     await writeTree(root, {
       "docs/instructions/testing.md": "# Testing\n\n## Rules\n\nSee [style](style.md).\n",

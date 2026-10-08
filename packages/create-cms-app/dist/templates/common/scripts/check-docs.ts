@@ -1,7 +1,9 @@
 // Checks the documentation rules from AGENTS.md (run: `pnpm check:docs`):
 // - every relative link in AGENTS.md and docs/**/*.md points to an existing file, and every
 //   anchor to an existing heading
-// - each instruction file is linked at most once from AGENTS.md, as "- [Title](path) — when to read it"
+// - each instruction file is linked at most once from AGENTS.md as a list entry
+//   "- [Title](path) — when to read it" (anchored or not); links to it in prose are only checked
+//   for existence
 // - every instruction file is reachable from AGENTS.md
 // - links between instruction files are allowed but reported as warnings
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -25,6 +27,7 @@ const AGENTS = "AGENTS.md";
 const INSTRUCTIONS = "docs/instructions";
 const LINK = /\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
 const TRIGGER = /^\s*[-*]\s+\[[^\]]+\]\([^)]+\)\s+[—–-]\s+\S/;
+const BULLET = /^\s*[-*]\s+\[/;
 const FENCE = /^\s*(```|~~~)/;
 
 function toPosix(path: string): string {
@@ -134,8 +137,8 @@ export function checkDocs(root: string): DocsReport {
 
   const counts = new Map<string, number>();
   for (const link of linksIn(root, AGENTS)) {
-    // Links with an anchor are cross-references in prose, not entries of the instruction list.
-    if (!isInstruction(link.target) || link.anchor !== undefined) continue;
+    // Only bullet lines are instruction-list entries; prose links are checked as plain links.
+    if (!isInstruction(link.target) || !BULLET.test(link.line)) continue;
     counts.set(link.target, (counts.get(link.target) ?? 0) + 1);
     if (!TRIGGER.test(link.line)) {
       errors.push(
