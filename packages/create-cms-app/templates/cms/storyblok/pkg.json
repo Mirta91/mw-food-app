@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts"
+  }
+}

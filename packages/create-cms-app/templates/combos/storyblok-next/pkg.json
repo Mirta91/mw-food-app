@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@storyblok/react": "7.3.1"
+  }
+}
