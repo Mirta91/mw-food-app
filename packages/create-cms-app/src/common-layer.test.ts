@@ -29,6 +29,11 @@ describe("common layer", () => {
       "vitest.config.ts",
     ]);
     expect((files.get(".githooks/pre-commit")?.mode ?? 0) & 0o111).toBeTruthy();
+    // Verify AGENTS.md contains bare template tokens (not formatted to bold markdown)
+    const agentsContent = files.get("AGENTS.md")!.contents.toString("utf8");
+    expect(agentsContent).toContain(
+      "__PROJECT_NAME__ is a __FRAMEWORK__ app that loads its content from __CMS__.",
+    );
   });
 
   it("has docs that pass check-docs once framework and cms docs exist", async () => {
