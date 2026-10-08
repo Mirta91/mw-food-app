@@ -35,6 +35,7 @@ const REQUIRED = [
 
 const CMS_FILES: Record<Cms, string[]> = {
   sanity: [
+    "cms/package.json",
     "cms/sanity.cli.ts",
     "cms/sanity.config.ts",
     "cms/schema-types/example.ts",
@@ -147,6 +148,19 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
       for (const script of scripts.filter((name) => name.startsWith("cms:")))
         expect(readme, script).toContain(`pnpm ${script}`);
     });
+
+    it.runIf(cms === "sanity")(
+      "declares the root styled-components version for the Studio",
+      async () => {
+        const all = await entries();
+        const root = JSON.parse(text(all, "package.json"));
+        const studio = JSON.parse(text(all, "cms/package.json"));
+        expect(studio.name).toBe(`${id}-cms`);
+        expect(studio.dependencies["styled-components"]).toBe(
+          root.dependencies["styled-components"],
+        );
+      },
+    );
 
     it("passes check-docs when written", async () => {
       const target = join(await makeTempDir(), id);
