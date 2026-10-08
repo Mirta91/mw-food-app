@@ -1315,6 +1315,33 @@ function parseFragment(file, path) {
     throw new Error(`Invalid JSON in template ${path}: ${error.message}`);
   }
 }
+var PKG_KEY_ORDER = [
+  "name",
+  "version",
+  "private",
+  "type",
+  "scripts",
+  "dependencies",
+  "devDependencies",
+  "devEngines",
+  "engines"
+];
+var DEPENDENCY_KEYS = ["dependencies", "devDependencies"];
+function byKey([a2], [b]) {
+  return a2 < b ? -1 : a2 > b ? 1 : 0;
+}
+function orderPackageJson(pkg) {
+  const rank = (key) => {
+    const index = PKG_KEY_ORDER.indexOf(key);
+    return index === -1 ? PKG_KEY_ORDER.length : index;
+  };
+  const entries = Object.entries(pkg).sort(([a2], [b]) => rank(a2) - rank(b));
+  return Object.fromEntries(
+    entries.map(
+      ([key, value]) => DEPENDENCY_KEYS.includes(key) && value && typeof value === "object" && !Array.isArray(value) ? [key, Object.fromEntries(Object.entries(value).sort(byKey))] : [key, value]
+    )
+  );
+}
 async function planProject(templatesDir2, choices) {
   const tokens = {
     __PROJECT_NAME__: choices.name,
@@ -1340,7 +1367,7 @@ async function planProject(templatesDir2, choices) {
     mode: file.mode
   }));
   if (Object.keys(pkg).length > 0) {
-    const json = Buffer.from(`${JSON.stringify(pkg, null, 2)}
+    const json = Buffer.from(`${JSON.stringify(orderPackageJson(pkg), null, 2)}
 `);
     entries.push({
       kind: "file",

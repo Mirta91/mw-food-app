@@ -31,6 +31,40 @@ function parseFragment(file: TemplateFile, path: string): JsonObject {
   }
 }
 
+// The order oxfmt sorts package.json into, so a generated project passes `pnpm format` as
+// written. Keys not listed keep their merge order after the listed ones.
+const PKG_KEY_ORDER = [
+  "name",
+  "version",
+  "private",
+  "type",
+  "scripts",
+  "dependencies",
+  "devDependencies",
+  "devEngines",
+  "engines",
+];
+const DEPENDENCY_KEYS = ["dependencies", "devDependencies"];
+
+function byKey([a]: [string, unknown], [b]: [string, unknown]): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function orderPackageJson(pkg: JsonObject): JsonObject {
+  const rank = (key: string) => {
+    const index = PKG_KEY_ORDER.indexOf(key);
+    return index === -1 ? PKG_KEY_ORDER.length : index;
+  };
+  const entries = Object.entries(pkg).sort(([a], [b]) => rank(a) - rank(b));
+  return Object.fromEntries(
+    entries.map(([key, value]) =>
+      DEPENDENCY_KEYS.includes(key) && value && typeof value === "object" && !Array.isArray(value)
+        ? [key, Object.fromEntries(Object.entries(value).sort(byKey))]
+        : [key, value],
+    ),
+  );
+}
+
 export async function planProject(templatesDir: string, choices: Choices): Promise<FileEntry[]> {
   const tokens = {
     __PROJECT_NAME__: choices.name,
@@ -58,7 +92,7 @@ export async function planProject(templatesDir: string, choices: Choices): Promi
     mode: file.mode,
   }));
   if (Object.keys(pkg).length > 0) {
-    const json = Buffer.from(`${JSON.stringify(pkg, null, 2)}\n`);
+    const json = Buffer.from(`${JSON.stringify(orderPackageJson(pkg), null, 2)}\n`);
     entries.push({
       kind: "file",
       path: "package.json",

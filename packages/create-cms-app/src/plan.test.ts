@@ -56,6 +56,35 @@ describe("planProject", () => {
     expect(text(entries, "package.json").endsWith("}\n")).toBe(true);
   });
 
+  it("orders package.json keys and dependencies like oxfmt", async () => {
+    await writeTree(templates, {
+      "common/pkg.json": JSON.stringify({
+        name: "__PROJECT_NAME__",
+        devDependencies: { vitest: "5.0.3" },
+        engines: { node: ">=24" },
+        devEngines: {},
+      }),
+      "frameworks/next/pkg.json": JSON.stringify({
+        devDependencies: { "@types/react": "19.3.0" },
+        dependencies: { next: "16.4.0" },
+        scripts: { dev: "next dev", build: "next build" },
+      }),
+      "cms/sanity/pkg.json": JSON.stringify({ dependencies: { "next-sanity": "13.3.4" } }),
+    });
+    const pkg = JSON.parse(text(await planProject(templates, choices), "package.json"));
+    expect(Object.keys(pkg)).toEqual([
+      "name",
+      "scripts",
+      "dependencies",
+      "devDependencies",
+      "devEngines",
+      "engines",
+    ]);
+    expect(Object.keys(pkg.dependencies)).toEqual(["next", "next-sanity"]);
+    expect(Object.keys(pkg.devDependencies)).toEqual(["@types/react", "vitest"]);
+    expect(Object.keys(pkg.scripts)).toEqual(["dev", "build"]);
+  });
+
   it("renders pnpm-workspace.yaml from merged fragments", async () => {
     const entries = await planProject(templates, choices);
     expect(text(entries, "pnpm-workspace.yaml")).toBe("allowBuilds:\n  sharp: true\n");

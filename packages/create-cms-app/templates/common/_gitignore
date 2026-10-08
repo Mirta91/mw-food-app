@@ -9,6 +9,7 @@ dist/
 build/
 .next/
 next-env.d.ts
+*.tsbuildinfo
 .nuxt/
 .output/
 .astro/

@@ -6,7 +6,8 @@
     "build": "node build.ts",
     "check-types": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "test:matrix": "node scripts/test-matrix.ts"
   },
   "devDependencies": {
     "@clack/prompts": "1.8.1",

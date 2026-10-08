@@ -29,3 +29,12 @@ repository; there is no publish step.
 - Pin template dependencies to exact versions. Bump them by hand and run `pnpm test:matrix`.
 - Templates are excluded from this repository's lint, format and type checks; `pnpm test:matrix`
   validates them inside generated projects.
+
+## Matrix test
+
+- `pnpm test:matrix` is not part of `pnpm check`: it installs every combination from the network
+  and takes minutes. Run it for the affected combinations after changing templates, and for all
+  combinations before bumping template dependencies.
+- Fix templates, never a generated copy. `--keep` leaves the generated projects for inspection.
+- Every route renders `data-cms-state` through `loadCmsState()` and `describeCmsState()` from
+  `src/lib/cms/state.ts`; the smoke test depends on it.

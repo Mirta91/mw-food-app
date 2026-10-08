@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "cms:dev": "cd cms && sanity dev",
+    "cms:migrate": "cd cms && sanity migration run 001-create-example --no-dry-run"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.18.0",
+    "styled-components": "6.5.3"
+  }
+}

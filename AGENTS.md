@@ -51,6 +51,7 @@ This is a pnpm workspace orchestrated by Turborepo.
 | `pnpm check:docs`                             | Check dead links, anchors and the instruction link rules                                         |
 | `pnpm check`                                  | Run lint, format, check-types, test, build, check:bundle and check:docs; runs as pre-commit hook |
 | `pnpm verify:git-install`                     | Check that the committed bundle runs from a git URL                                              |
+| `pnpm test:matrix [<cms>-<framework>...]`     | Generate, install and check combinations (slow, needs network)                                   |
 
 ## Layout
 

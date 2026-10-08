@@ -19,6 +19,7 @@
     "check-types": "turbo run check-types",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
+    "test:matrix": "node packages/create-cms-app/scripts/test-matrix.ts",
     "check": "turbo run lint format check-types test build && pnpm check:bundle && pnpm check:docs",
     "check:links": "lychee --offline --include-fragments --no-progress AGENTS.md \"docs/**/*.md\"",
     "check:instructions": "node scripts/check-instruction-links.mjs",
