@@ -25,7 +25,6 @@ describe("common layer", () => {
       "pnpm-workspace.json",
       "scripts/check-docs.ts",
       "scripts/smoke.ts",
-      "src/lib/cms/example.ts",
       "src/lib/utils/env.ts",
       "src/lib/utils/once.ts",
       "tests/e2e/smoke.spec.ts",

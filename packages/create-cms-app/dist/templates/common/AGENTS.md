@@ -57,7 +57,7 @@ pnpm is enforced through `devEngines` and Node through `engines` in `package.jso
 ## Layout
 
 - `src/` — the app.
-- `src/lib/cms/` — the CMS client and the content types it returns.
+- `src/lib/cms/` — the CMS client (`client.ts`) and one query module per content type.
 - `src/lib/utils/` — helpers that are not specific to the CMS, such as the environment check and
   `once()`. Put new shared helpers here, not in `src/lib/cms/`.
 - `cms/` — schema as code, the example content type and migrations for the CMS.

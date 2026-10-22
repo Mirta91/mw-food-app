@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { fetchExample, getClient } from "@/lib/cms/client";
+import { fetchExample } from "@/lib/cms/example";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const example = await fetchExample(getClient());
+  const example = await fetchExample();
   if (!example) {
     notFound();
   }

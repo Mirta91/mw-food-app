@@ -1,5 +1,4 @@
-import { type ContentfulClientApi, createClient } from "contentful";
-import type { Example } from "./example.ts";
+import { createClient } from "contentful";
 import { once } from "../utils/once.ts";
 
 export const requiredEnv = ["CONTENTFUL_SPACE_ID", "CONTENTFUL_ACCESS_TOKEN"] as const;
@@ -12,15 +11,3 @@ export const getClient = once(() =>
     environment: process.env.CONTENTFUL_ENVIRONMENT || "master",
   }),
 );
-
-export async function fetchExample(
-  client: ContentfulClientApi<undefined>,
-): Promise<Example | null> {
-  const { items } = await client.getEntries({
-    content_type: "example",
-    limit: 1,
-    order: ["sys.createdAt"],
-  });
-  const fields = items[0]?.fields;
-  return fields ? { title: String(fields.title ?? ""), body: String(fields.body ?? "") } : null;
-}

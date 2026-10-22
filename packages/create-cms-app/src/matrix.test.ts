@@ -32,6 +32,7 @@ const REQUIRED = [
   "src/lib/utils/once.ts",
   "tests/e2e/smoke.spec.ts",
   "tests/unit/cms-client.test.ts",
+  "tests/unit/cms-example.test.ts",
   "tests/unit/env.test.ts",
   "tests/unit/once.test.ts",
   "tsconfig.json",

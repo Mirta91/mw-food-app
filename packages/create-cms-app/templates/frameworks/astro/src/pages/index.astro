@@ -1,8 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { fetchExample, getClient } from "../lib/cms/client";
+import { fetchExample } from "../lib/cms/example";
 
-const example = await fetchExample(getClient());
+const example = await fetchExample();
 if (!example) {
   return new Response(null, { status: 404, statusText: "Not Found" });
 }

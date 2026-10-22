@@ -1,35 +1,13 @@
-import type { ContentfulClientApi } from "contentful";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-const getEntries = vi.fn();
-vi.mock("contentful", () => ({ createClient: vi.fn(() => ({ getEntries })) }));
+vi.mock("contentful", () => ({ createClient: vi.fn(() => ({})) }));
 
 const { createClient } = await import("contentful");
-const { fetchExample, getClient, requiredEnv } = await import("../../src/lib/cms/client");
-const client = { getEntries } as unknown as ContentfulClientApi<undefined>;
-
-beforeEach(() => {
-  getEntries.mockReset();
-});
+const { getClient, requiredEnv } = await import("../../src/lib/cms/client");
 
 describe("Contentful client", () => {
   it("requires the space and delivery token", () => {
     expect(requiredEnv).toEqual(["CONTENTFUL_SPACE_ID", "CONTENTFUL_ACCESS_TOKEN"]);
-  });
-
-  it("maps the first example entry", async () => {
-    getEntries.mockResolvedValue({ items: [{ fields: { title: "Hello", body: "World" } }] });
-    expect(await fetchExample(client)).toEqual({ title: "Hello", body: "World" });
-    expect(getEntries).toHaveBeenCalledWith({
-      content_type: "example",
-      limit: 1,
-      order: ["sys.createdAt"],
-    });
-  });
-
-  it("returns null without entries", async () => {
-    getEntries.mockResolvedValue({ items: [] });
-    expect(await fetchExample(client)).toBeNull();
   });
 
   it("creates the SDK client once from the environment, defaulting to master", () => {

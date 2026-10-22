@@ -52,11 +52,12 @@ remains in the templates.
   missing, prints their names and exits 0 without starting Playwright. Otherwise Playwright starts
   the app and checks that the home page answers with status 200.
 - CMS clients are created once, on first use, through `getClient()` in each CMS layer's
-  `src/lib/cms/client.ts` instead of per request; a client at plain module scope would throw
-  during builds without `.env`. Every framework uses the same plain SDK per CMS (`contentful`,
-  `@sanity/client`, `storyblok-js-client`), typed with the SDK's own client type, and reads
-  `process.env` (SvelteKit included). Home routes are identical for all three CMSs and live in the
-  framework layer; a combination without files of its own has no combo layer.
+  `src/lib/cms/client.ts` instead of per request, and queries such as `fetchExample()` in
+  `src/lib/cms/example.ts` default their client parameter to it; a client at plain module scope
+  would throw during builds without `.env`. Every framework uses the same plain SDK per CMS
+  (`contentful`, `@sanity/client`, `storyblok-js-client`), typed with the SDK's own client type, and
+  reads `process.env` (SvelteKit included). Home routes are identical for all three CMSs and live in
+  the framework layer; a combination without files of its own has no combo layer.
 - Updating the docs that describe the old behavior: `docs/instructions/generator.md`, the four
   template `framework.md` files, the template `testing.md`, the three CMS `README.md` templates,
   `packages/create-cms-app/README.md`, and the comment in the Astro `astro.config.ts` template.
@@ -68,7 +69,7 @@ remains in the templates.
 
 - No slug-based routing; the home page keeps loading the first `example` entry.
 - No custom 404 or error pages; the frameworks' defaults are used.
-- No change to the content model, the `cms/` migrations or `fetchExample()`.
+- No change to the content model, the `cms/` migrations or the query `fetchExample()` runs.
 - No validation of variable values, such as an unknown `STORYBLOK_REGION`; only presence is
   checked.
 - No use of Astro's `astro:env` schema: it validates secrets during `astro build` and at runtime
