@@ -1,4 +1,4 @@
-import type { Example } from "./state";
+import type { Example } from "./example";
 
 export type StoryblokRegion = "eu" | "us" | "ap" | "ca" | "cn";
 

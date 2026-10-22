@@ -1,5 +1,5 @@
 import { createClient } from "contentful";
-import type { Example } from "./state";
+import type { Example } from "./example";
 
 // The subset of the Contentful delivery client that the app uses.
 export type ContentfulEntries = {

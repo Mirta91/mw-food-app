@@ -1,4 +1,4 @@
-import type { Example } from "./state";
+import type { Example } from "./example";
 
 // The subset of @sanity/client that the app uses; bindings such as next-sanity return
 // compatible clients.

@@ -1,20 +1,13 @@
-export type Example = {
-  title: string;
-  body: string;
-};
+import type { Example } from "./example";
+
+export type { Example } from "./example";
+export { missingEnv } from "./env";
 
 export type CmsState =
   | { kind: "example"; example: Example }
   | { kind: "empty" }
   | { kind: "missing-env"; missing: string[] }
   | { kind: "error"; message: string };
-
-export function missingEnv(
-  required: readonly string[],
-  env: Record<string, string | undefined>,
-): string[] {
-  return required.filter((name) => !env[name]?.trim());
-}
 
 // Never throws: routes render every outcome, including a misconfigured or unreachable CMS.
 export async function loadCmsState(
