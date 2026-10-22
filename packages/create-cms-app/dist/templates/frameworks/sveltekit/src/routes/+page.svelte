@@ -1,8 +1,10 @@
 <script lang="ts">
-  import CmsStatus from "../lib/components/CmsStatus.svelte";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
 </script>
 
-<CmsStatus state={data.state} />
+<main>
+  <h1>{data.example.title}</h1>
+  <p>{data.example.body}</p>
+</main>

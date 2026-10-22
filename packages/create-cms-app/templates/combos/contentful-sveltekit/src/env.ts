@@ -6,7 +6,8 @@ export const variables = defineEnvVars({
   CONTENTFUL_ENVIRONMENT: { schema: optional },
 });
 
-// Optional at startup, so the home page can report missing variables instead of failing.
+// Optional, so `pnpm build` and `pnpm check-types` run without .env. src/hooks.server.ts checks
+// the required ones when the server starts.
 function optional(value: string | undefined): string | undefined {
   return value;
 }
