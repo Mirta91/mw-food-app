@@ -36,13 +36,15 @@ a task.
     and one example migration. For Sanity this includes the Studio configuration, run via
     `sanity dev` from `cms/`. Scripts to run them live in the root `package.json`. The folder is
     always generated.
-  - One route that loads the example content type through the api client and renders it, and
-    shows a clear message when the CMS environment variables are missing.
+  - One route that loads the example content type through the api client and renders it. The
+    server refuses to start when the CMS environment variables are missing (see
+    `2-fail-fast-on-cms-errors`).
   - `.env.example` listing the keys the chosen CMS needs.
   - TypeScript, oxlint, oxfmt, Vitest and Playwright configured.
   - A Vitest unit test for the api client with a mocked fetch or SDK, runnable without
     credentials.
-  - A Playwright smoke test that starts the app and checks the home page renders.
+  - A Playwright smoke test that starts the app and checks the home page renders; it is skipped
+    with a message naming the missing variables when the environment is not filled in.
   - `AGENTS.md` plus a `CLAUDE.md` symlink to it, modelled on this repository's: rules for editing
     the file, project overview, layout, commands, conventions, a definition of done, and links to
     `docs/instructions/` files.
@@ -96,8 +98,8 @@ In the generated project:
   `check:docs`. Further e2e tests, if the team adds them, run through a separate script.
 - The definition of done in `AGENTS.md` requires the agent to run `pnpm check` and have it pass
   before reporting a task as done.
-- The demo route renders the example content when the environment is filled in, and a message
-  naming the missing variables when it is not. It does not crash.
+- The demo route renders the example content when the environment is filled in. When it is not,
+  `pnpm dev` and `pnpm start` exit with a message naming the missing variables.
 
 ## Constraints & assumptions
 
@@ -116,8 +118,8 @@ In the generated project:
       prompts in the order project name, CMS, framework, then shows a summary and asks to confirm.
 - [ ] For each of the 12 CMS × framework combinations, the generated project passes
       `pnpm install` followed by `pnpm check` without any CMS credentials.
-- [ ] In each generated project the demo route shows a message naming the missing variables when
-      `.env` is absent, and the Playwright smoke test passes in that state.
+- [ ] In each generated project `pnpm dev` and `pnpm start` exit with a message naming the missing
+      variables when `.env` is absent, and the Playwright smoke test is skipped with that message.
 - [ ] With valid credentials and the example content type created via the `cms/` migration, the
       demo route renders the example content, for each CMS.
 - [ ] Each generated project contains the app, the api client, the `cms/` folder with schema, one
