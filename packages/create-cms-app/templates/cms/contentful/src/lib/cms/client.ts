@@ -22,15 +22,11 @@ export async function fetchExample(client: ContentfulEntries): Promise<Example |
   return fields ? { title: String(fields.title ?? ""), body: String(fields.body ?? "") } : null;
 }
 
-export function createExampleLoader(
-  env: Record<string, string | undefined>,
-): () => Promise<Example | null> {
-  return () => {
-    const client = createClient({
-      space: env.CONTENTFUL_SPACE_ID ?? "",
-      accessToken: env.CONTENTFUL_ACCESS_TOKEN ?? "",
-      environment: env.CONTENTFUL_ENVIRONMENT || "master",
-    });
-    return fetchExample({ getEntries: (query) => client.getEntries(query as never) as never });
-  };
+export function createContentfulClient(env: Record<string, string | undefined>): ContentfulEntries {
+  const client = createClient({
+    space: env.CONTENTFUL_SPACE_ID ?? "",
+    accessToken: env.CONTENTFUL_ACCESS_TOKEN ?? "",
+    environment: env.CONTENTFUL_ENVIRONMENT || "master",
+  });
+  return { getEntries: (query) => client.getEntries(query as never) as never };
 }

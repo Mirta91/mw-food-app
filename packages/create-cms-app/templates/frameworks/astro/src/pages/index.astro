@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { fetchExample } from "../lib/cms/client";
+import { getClient } from "../lib/cms/sdk";
+
+const example = await fetchExample(getClient());
+if (!example) {
+  return new Response(null, { status: 404, statusText: "Not Found" });
+}
+---
+
+<Layout>
+  <main>
+    <h1>{example.title}</h1>
+    <p>{example.body}</p>
+  </main>
+</Layout>

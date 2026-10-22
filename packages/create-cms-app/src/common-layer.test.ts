@@ -27,8 +27,10 @@ describe("common layer", () => {
       "scripts/smoke.ts",
       "src/lib/cms/env.ts",
       "src/lib/cms/example.ts",
+      "src/lib/cms/once.ts",
       "tests/e2e/smoke.spec.ts",
       "tests/unit/cms-env.test.ts",
+      "tests/unit/cms-once.test.ts",
       "vitest.config.ts",
     ]);
     expect((files.get(".githooks/pre-commit")?.mode ?? 0) & 0o111).toBeTruthy();

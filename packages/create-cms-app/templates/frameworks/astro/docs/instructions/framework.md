@@ -1,8 +1,7 @@
 # Astro
 
 - Server output with the Node adapter: pages in `src/pages/` render on each request.
-- Load CMS data in the page frontmatter: read `process.env` per request and create the CMS client
-  there. Return `new Response(null, { status: 404 })` when the CMS has no matching content and
+- Load CMS data in the page frontmatter. Return `new Response(null, { status: 404 })` when the CMS has no matching content and
   let CMS errors propagate to Astro's error page. Do not render errors as page content.
 - The required CMS variables are checked when the server starts, so a missing one stops the
   server instead of failing a request: the `check-env` integration in `astro.config.ts` for

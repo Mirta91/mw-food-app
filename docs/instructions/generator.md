@@ -18,8 +18,9 @@ repository; there is no publish step.
 ## Templates
 
 - Layers apply in the order `templates/common`, `frameworks/<framework>`, `cms/<cms>`,
-  `combos/<cms>-<framework>`. A later layer replaces a whole file of an earlier one; there is no
-  partial patching. Put a file in the lowest layer it is the same for.
+  `combos/<cms>-<framework>`; a combination without files of its own has no combo directory. A
+  later layer replaces a whole file of an earlier one; there is no partial patching. Put a file
+  in the lowest layer it is the same for.
 - `pkg.json` and `pnpm-workspace.json` at a layer root are fragments: objects are deep-merged,
   scalars and arrays of later layers replace earlier ones. They become `package.json` and
   `pnpm-workspace.yaml`.
@@ -36,9 +37,10 @@ repository; there is no publish step.
   naming the missing ones; `pnpm build` and `pnpm check-types` must still pass without `.env`.
   Routes render content only: missing content goes to the framework's 404, CMS errors to its
   error page. The startup hook per framework is described in its `framework.md`.
-- Templates create CMS clients per request from runtime env. Do not use build-time framework
-  integration options for CMS credentials, so `pnpm start` honours `.env`. Framework-specific
-  details live in each `framework.md`.
+- Templates create CMS clients from runtime env on first use (`getClient()` in
+  `src/lib/cms/sdk.ts`). Do not use build-time framework integration options for CMS
+  credentials, so `pnpm start` honours `.env`. Framework-specific details live in each
+  `framework.md`.
 - Generated projects exclude `pnpm-workspace.yaml` from oxfmt, because `pnpm install` rewrites it.
 - Every generated project has a `README.md` for people: requirements, getting started, where to
   find each `.env` value, commands, and pointers to `AGENTS.md` and `docs/instructions/`. It lives

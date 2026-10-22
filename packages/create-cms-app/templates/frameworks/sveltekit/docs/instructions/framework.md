@@ -3,9 +3,8 @@
 - SvelteKit 3 is configured through `sveltekit({ ... })` in `vite.config.ts`; it does not read
   `svelte.config.*`, and `$lib` is gone. Shared code lives in `src/lib/`; import it with
   relative paths.
-- Routes in `src/routes/`. Load CMS data in `+page.server.ts` so secrets stay on the server: read
-  variables from `$app/env/private` and create the CMS client in the load function, on each
-  request. Call `error(404, ...)` when the CMS has no matching content and let CMS errors
+- Routes in `src/routes/`. Load CMS data in `+page.server.ts` so secrets stay on the server; read
+  variables from `$app/env/private`. Call `error(404, ...)` when the CMS has no matching content and let CMS errors
   propagate to SvelteKit's error page. Do not render errors as page content.
 - Declare every variable the app reads in `src/env.ts` (`defineEnvVars`). Keep CMS variables
   dynamic (not `static`) and optional, so `pnpm build` and `pnpm check-types` run without `.env`.

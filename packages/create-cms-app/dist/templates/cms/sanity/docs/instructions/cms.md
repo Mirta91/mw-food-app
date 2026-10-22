@@ -12,4 +12,7 @@
   Authenticate once with `pnpm exec sanity login`.
 - The app reads content through `src/lib/cms/client.ts`. Keep queries there and test them in
   `tests/unit/cms-client.test.ts` with a mocked client.
+- `getClient()` in `src/lib/cms/sdk.ts` creates the SDK client from the runtime environment on
+  first use and reuses it; routes call `fetchExample(getClient())`. Do not create clients when a
+  module loads or in framework config: builds import route modules and must pass without `.env`.
 - Every variable the app needs is listed in `requiredEnv` and in `.env.example`.

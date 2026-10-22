@@ -4,7 +4,8 @@ const getEntries = vi.fn();
 vi.mock("contentful", () => ({ createClient: vi.fn(() => ({ getEntries })) }));
 
 const { createClient } = await import("contentful");
-const { createExampleLoader, fetchExample, requiredEnv } = await import("../../src/lib/cms/client");
+const { createContentfulClient, fetchExample, requiredEnv } =
+  await import("../../src/lib/cms/client");
 
 beforeEach(() => {
   getEntries.mockReset();
@@ -32,11 +33,13 @@ describe("Contentful client", () => {
 
   it("creates the SDK client from the environment, defaulting to master", async () => {
     getEntries.mockResolvedValue({ items: [] });
-    await createExampleLoader({
-      CONTENTFUL_SPACE_ID: "space",
-      CONTENTFUL_ACCESS_TOKEN: "token",
-      CONTENTFUL_ENVIRONMENT: "",
-    })();
+    await fetchExample(
+      createContentfulClient({
+        CONTENTFUL_SPACE_ID: "space",
+        CONTENTFUL_ACCESS_TOKEN: "token",
+        CONTENTFUL_ENVIRONMENT: "",
+      }),
+    );
     expect(createClient).toHaveBeenCalledWith({
       space: "space",
       accessToken: "token",

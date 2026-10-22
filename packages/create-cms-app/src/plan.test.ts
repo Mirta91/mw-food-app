@@ -1,3 +1,4 @@
+import { rm } from "node:fs/promises";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Choices } from "./choices.ts";
@@ -120,6 +121,12 @@ describe("planProject", () => {
     await expect(planProject(templates, { ...choices, framework: "nuxt" })).rejects.toThrow(
       `Template layer missing: ${join("frameworks", "nuxt")}`,
     );
+  });
+
+  it("needs no combo layer when the combination has no files of its own", async () => {
+    await rm(join(templates, "combos/sanity-next"), { recursive: true });
+    const entries = await planProject(templates, choices);
+    expect(text(entries, "shared.txt")).toBe("from next\n");
   });
 
   it("names the file when a fragment is invalid JSON", async () => {

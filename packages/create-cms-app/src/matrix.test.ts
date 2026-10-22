@@ -29,9 +29,12 @@ const REQUIRED = [
   "src/lib/cms/client.ts",
   "src/lib/cms/env.ts",
   "src/lib/cms/example.ts",
+  "src/lib/cms/once.ts",
+  "src/lib/cms/sdk.ts",
   "tests/e2e/smoke.spec.ts",
   "tests/unit/cms-client.test.ts",
   "tests/unit/cms-env.test.ts",
+  "tests/unit/cms-once.test.ts",
   "tsconfig.json",
   "vitest.config.ts",
 ];

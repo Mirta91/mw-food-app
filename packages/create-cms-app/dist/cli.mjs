@@ -1256,15 +1256,15 @@ function layerDirs(templatesDir2, combo) {
   const dirs = [
     join(templatesDir2, "common"),
     join(templatesDir2, "frameworks", combo.framework),
-    join(templatesDir2, "cms", combo.cms),
-    join(templatesDir2, "combos", `${combo.cms}-${combo.framework}`)
+    join(templatesDir2, "cms", combo.cms)
   ];
   for (const dir of dirs) {
     if (!existsSync(dir)) {
       throw new Error(`Template layer missing: ${relative(templatesDir2, dir)}`);
     }
   }
-  return dirs;
+  const comboDir = join(templatesDir2, "combos", `${combo.cms}-${combo.framework}`);
+  return existsSync(comboDir) ? [...dirs, comboDir] : dirs;
 }
 async function readLayer(dir) {
   const files = /* @__PURE__ */ new Map();

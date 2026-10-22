@@ -20,20 +20,21 @@ export type TemplateFile = {
 export const PKG_FRAGMENT = "pkg.json";
 export const WORKSPACE_FRAGMENT = "pnpm-workspace.json";
 
-// Layers in application order; a later layer replaces files of an earlier one.
+// Layers in application order; a later layer replaces files of an earlier one. A combination
+// without files of its own has no combo layer (git keeps no empty directories).
 export function layerDirs(templatesDir: string, combo: Combo): string[] {
   const dirs = [
     join(templatesDir, "common"),
     join(templatesDir, "frameworks", combo.framework),
     join(templatesDir, "cms", combo.cms),
-    join(templatesDir, "combos", `${combo.cms}-${combo.framework}`),
   ];
   for (const dir of dirs) {
     if (!existsSync(dir)) {
       throw new Error(`Template layer missing: ${relative(templatesDir, dir)}`);
     }
   }
-  return dirs;
+  const comboDir = join(templatesDir, "combos", `${combo.cms}-${combo.framework}`);
+  return existsSync(comboDir) ? [...dirs, comboDir] : dirs;
 }
 
 export async function readLayer(dir: string): Promise<Map<string, TemplateFile>> {
