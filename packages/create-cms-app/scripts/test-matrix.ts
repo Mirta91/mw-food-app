@@ -1,14 +1,28 @@
 // Generates CMS × framework combinations into a temporary directory, installs each, and runs its
-// `pnpm check` and pre-commit hook. Slow and needs network; not part of `pnpm check`.
+// `pnpm check`, `pnpm build` and pre-commit hook, and checks that `pnpm start` and `pnpm dev` refuse
+// to run without CMS variables. Slow and needs network; not part of `pnpm check`.
 // Usage: pnpm test:matrix [--concurrency <n>] [--keep] [<cms>-<framework> ...]
 import { spawn } from "node:child_process";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { allCombos, type Combo, comboId } from "../src/choices.ts";
 import { generate } from "../src/generate.ts";
 import type { Exec } from "../src/git.ts";
 import { sourceTemplatesDir } from "../src/paths.ts";
+
+type ExecResult = {
+  code: number;
+  output: string;
+  timedOut: boolean;
+};
+
+type StepOptions = {
+  expect?: (output: string) => boolean;
+  // The step passes when the command exits non-zero on its own (not through the timeout).
+  expectFailure?: boolean;
+  timeoutMs?: number;
+};
 
 type Outcome = {
   id: string;
@@ -77,36 +91,64 @@ function parseArgs(argv: string[]): { combos: Combo[]; concurrency: number; keep
   return { combos, concurrency, keep };
 }
 
+// With a timeout the command runs in its own process group, so the whole tree (pnpm, the
+// framework CLI, its server) is killed when the timeout expires.
 function exec(
   command: string,
   args: string[],
   cwd: string,
   env: NodeJS.ProcessEnv,
-): Promise<{ code: number; output: string }> {
+  timeoutMs?: number,
+): Promise<ExecResult> {
   return new Promise((resolve) => {
-    const child = spawn(command, args, { cwd, env, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(command, args, {
+      cwd,
+      env,
+      stdio: ["ignore", "pipe", "pipe"],
+      detached: timeoutMs !== undefined,
+    });
     let output = `$ ${command} ${args.join(" ")}\n`;
+    let timedOut = false;
+    const timer =
+      timeoutMs === undefined
+        ? undefined
+        : setTimeout(() => {
+            timedOut = true;
+            output += `timed out after ${timeoutMs} ms\n`;
+            process.kill(-(child.pid ?? 0), "SIGKILL");
+          }, timeoutMs);
     child.stdout.on("data", (chunk: Buffer) => (output += chunk.toString()));
     child.stderr.on("data", (chunk: Buffer) => (output += chunk.toString()));
-    child.on("error", (error) => resolve({ code: 1, output: `${output}${String(error)}\n` }));
-    child.on("close", (code) => resolve({ code: code ?? 1, output }));
+    child.on("error", (error) => {
+      clearTimeout(timer);
+      resolve({ code: 1, output: `${output}${String(error)}\n`, timedOut });
+    });
+    child.on("close", (code) => {
+      clearTimeout(timer);
+      resolve({ code: code ?? 1, output, timedOut });
+    });
   });
 }
 
 async function runCombo(combo: Combo, index: number, work: string): Promise<Outcome> {
   const id = comboId(combo);
   const dir = join(work, id);
-  const env = { ...baseEnv, E2E_PORT: String(4173 + index) };
+  // PORT keeps a server that wrongly starts from colliding with other combinations or local apps.
+  const port = String(4173 + index);
+  const env = { ...baseEnv, E2E_PORT: port, PORT: port };
   let log = "";
   const step = async (
     name: string,
     command: string,
     args: string[],
-    expect?: (output: string) => boolean,
+    { expect, expectFailure = false, timeoutMs }: StepOptions = {},
   ) => {
-    const result = await exec(command, args, dir, env);
+    const result = await exec(command, args, dir, env, timeoutMs);
     log += result.output;
-    if (result.code !== 0 || (expect && !expect(result.output))) {
+    const exitedAsExpected = expectFailure
+      ? result.code !== 0 && !result.timedOut
+      : result.code === 0;
+    if (!exitedAsExpected || (expect && !expect(result.output))) {
       throw new Error(name);
     }
     return result.output;
@@ -123,25 +165,44 @@ async function runCombo(combo: Combo, index: number, work: string): Promise<Outc
     if (result.git.status !== "committed") {
       throw new Error(`generate (git: ${result.git.status})`);
     }
-    await step(
-      "one initial commit",
-      "git",
-      ["rev-list", "--count", "HEAD"],
-      (out) => out.trim().split("\n").at(-1) === "1",
-    );
+    await step("one initial commit", "git", ["rev-list", "--count", "HEAD"], {
+      expect: (out) => out.trim().split("\n").at(-1) === "1",
+    });
     await step("pnpm install", "pnpm", ["install"]);
     await step("playwright install", "pnpm", ["exec", "playwright", "install", "chromium"]);
     await step("pnpm check", "pnpm", ["check"]);
+    await step("pnpm build", "pnpm", ["build"]);
+    const names = await requiredEnv(dir);
+    const namesMissing = (out: string) =>
+      out.includes("Missing environment variables:") && names.every((name) => out.includes(name));
+    for (const script of ["start", "dev"]) {
+      await step(`pnpm ${script} refuses without env`, "pnpm", [script], {
+        expect: namesMissing,
+        expectFailure: true,
+        timeoutMs: 120_000,
+      });
+    }
     await step(
       "pre-commit hook",
       "git",
       ["commit", "--allow-empty", "-m", "test: pre-commit hook"],
-      (out) => out.includes("pre-commit: running pnpm check"),
+      { expect: (out) => out.includes("pre-commit: running pnpm check") },
     );
     return { id, log };
   } catch (error) {
     return { id, failedStep: (error as Error).message, log };
   }
+}
+
+// Same parsing as src/matrix.test.ts: the names in `requiredEnv = [...]` of the CMS client.
+async function requiredEnv(dir: string): Promise<string[]> {
+  const client = await readFile(join(dir, "src/lib/cms/client.ts"), "utf8");
+  const list = /requiredEnv = \[([^\]]*)\]/.exec(client)?.[1] ?? "";
+  const names = list.match(/[A-Z_]+/g) ?? [];
+  if (names.length === 0) {
+    throw new Error("requiredEnv not found");
+  }
+  return names;
 }
 
 async function pool<T, R>(

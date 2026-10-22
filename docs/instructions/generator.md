@@ -48,6 +48,8 @@ repository; there is no publish step.
   and takes minutes. Run it for the affected combinations after changing templates, and for all
   combinations before bumping template dependencies.
 - Fix templates, never a generated copy. `--keep` leaves the generated projects for inspection.
+- The matrix runs without CMS variables. Besides `pnpm check`, it requires `pnpm build` to pass
+  and `pnpm dev` and `pnpm start` to exit with the missing-variables message.
 - Every route renders `data-cms-state` through `loadCmsState()` and `describeCmsState()` from
   `src/lib/cms/state.ts`; the smoke test depends on it.
 - `src/matrix.test.ts` runs in `pnpm check` without network: it plans all combinations and checks
