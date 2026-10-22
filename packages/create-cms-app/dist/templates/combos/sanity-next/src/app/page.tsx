@@ -1,20 +1,25 @@
 import { createClient } from "next-sanity";
-import { CmsStatus } from "@/components/cms-status";
-import { apiVersion, fetchExample, requiredEnv } from "@/lib/cms/client";
-import { loadCmsState, missingEnv } from "@/lib/cms/state";
+import { notFound } from "next/navigation";
+import { apiVersion, fetchExample } from "@/lib/cms/client";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const state = await loadCmsState(missingEnv(requiredEnv, process.env), () =>
-    fetchExample(
-      createClient({
-        projectId: process.env.SANITY_PROJECT_ID,
-        dataset: process.env.SANITY_DATASET,
-        apiVersion,
-        useCdn: true,
-      }),
-    ),
+  const example = await fetchExample(
+    createClient({
+      projectId: process.env.SANITY_PROJECT_ID,
+      dataset: process.env.SANITY_DATASET,
+      apiVersion,
+      useCdn: true,
+    }),
   );
-  return <CmsStatus state={state} />;
+  if (!example) {
+    notFound();
+  }
+  return (
+    <main>
+      <h1>{example.title}</h1>
+      <p>{example.body}</p>
+    </main>
+  );
 }

@@ -1,13 +1,17 @@
-import { CmsStatus } from "@/components/cms-status";
-import { createExampleLoader, requiredEnv } from "@/lib/cms/client";
-import { loadCmsState, missingEnv } from "@/lib/cms/state";
+import { notFound } from "next/navigation";
+import { createExampleLoader } from "@/lib/cms/client";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const state = await loadCmsState(
-    missingEnv(requiredEnv, process.env),
-    createExampleLoader(process.env),
+  const example = await createExampleLoader(process.env)();
+  if (!example) {
+    notFound();
+  }
+  return (
+    <main>
+      <h1>{example.title}</h1>
+      <p>{example.body}</p>
+    </main>
   );
-  return <CmsStatus state={state} />;
 }

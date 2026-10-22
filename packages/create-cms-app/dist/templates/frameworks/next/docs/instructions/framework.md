@@ -5,6 +5,8 @@
   reach the browser.
 - The home page is dynamic (`export const dynamic = "force-dynamic"`) so it reads the environment
   at request time.
-- Every page that loads CMS content renders `CmsStatus` with the result of `loadCmsState()`, so a
-  missing or broken CMS configuration shows a message instead of an error page.
+- `src/instrumentation.ts` checks the required CMS variables when the server starts, so a missing
+  one stops `pnpm dev` and `pnpm start` instead of failing a request.
+- Pages call `notFound()` when the CMS has no matching content and let CMS errors propagate to
+  Next's error page. Do not render errors as page content.
 - `pnpm start` listens on `PORT` (default 3000); Playwright sets it.

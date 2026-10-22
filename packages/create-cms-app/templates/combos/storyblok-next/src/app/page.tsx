@@ -1,13 +1,18 @@
-import { CmsStatus } from "@/components/cms-status";
-import { fetchExample, requiredEnv } from "@/lib/cms/client";
-import { loadCmsState, missingEnv } from "@/lib/cms/state";
+import { notFound } from "next/navigation";
+import { fetchExample } from "@/lib/cms/client";
 import { getStoryblokApi } from "@/lib/cms/storyblok";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const state = await loadCmsState(missingEnv(requiredEnv, process.env), () =>
-    fetchExample(getStoryblokApi(process.env)),
+  const example = await fetchExample(getStoryblokApi(process.env));
+  if (!example) {
+    notFound();
+  }
+  return (
+    <main>
+      <h1>{example.title}</h1>
+      <p>{example.body}</p>
+    </main>
   );
-  return <CmsStatus state={state} />;
 }
