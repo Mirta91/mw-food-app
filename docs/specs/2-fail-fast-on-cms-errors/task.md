@@ -51,10 +51,12 @@ remains in the templates.
 - The smoke test: `pnpm test:smoke` runs through a wrapper that, when required variables are
   missing, prints their names and exits 0 without starting Playwright. Otherwise Playwright starts
   the app and checks that the home page answers with status 200.
-- CMS clients are created once, on first use, through `getClient()` in `src/lib/cms/sdk.ts`
-  instead of per request; a client at plain module scope would throw during builds without
-  `.env`. Home routes that are then identical for all three CMSs live in the framework layer,
-  and a combination without files of its own has no combo layer.
+- CMS clients are created once, on first use, through `getClient()` in each CMS layer's
+  `src/lib/cms/client.ts` instead of per request; a client at plain module scope would throw
+  during builds without `.env`. Every framework uses the same plain SDK per CMS (`contentful`,
+  `@sanity/client`, `storyblok-js-client`), typed with the SDK's own client type, and reads
+  `process.env` (SvelteKit included). Home routes are identical for all three CMSs and live in the
+  framework layer; a combination without files of its own has no combo layer.
 - Updating the docs that describe the old behavior: `docs/instructions/generator.md`, the four
   template `framework.md` files, the template `testing.md`, the three CMS `README.md` templates,
   `packages/create-cms-app/README.md`, and the comment in the Astro `astro.config.ts` template.

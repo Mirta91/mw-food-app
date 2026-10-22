@@ -1,6 +1,5 @@
 import { error } from "@sveltejs/kit";
-import { fetchExample } from "../lib/cms/client";
-import { getClient } from "../lib/cms/sdk";
+import { fetchExample, getClient } from "../lib/cms/client";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {

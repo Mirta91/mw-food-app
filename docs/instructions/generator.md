@@ -37,9 +37,10 @@ repository; there is no publish step.
   naming the missing ones; `pnpm build` and `pnpm check-types` must still pass without `.env`.
   Routes render content only: missing content goes to the framework's 404, CMS errors to its
   error page. The startup hook per framework is described in its `framework.md`.
-- Templates create CMS clients from runtime env on first use (`getClient()` in
-  `src/lib/cms/sdk.ts`). Do not use build-time framework integration options for CMS
-  credentials, so `pnpm start` honours `.env`. Framework-specific details live in each
+- Templates create CMS clients from runtime env on first use (`getClient()` in each CMS layer's
+  `src/lib/cms/client.ts`). Every framework uses the same plain SDK per CMS, without framework
+  bindings, so the client lives once per CMS. Do not use build-time framework integration options
+  for CMS credentials, so `pnpm start` honours `.env`. Framework-specific details live in each
   `framework.md`.
 - Generated projects exclude `pnpm-workspace.yaml` from oxfmt, because `pnpm install` rewrites it.
 - Every generated project has a `README.md` for people: requirements, getting started, where to

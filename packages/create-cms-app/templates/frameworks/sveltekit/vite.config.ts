@@ -1,21 +1,27 @@
 import adapter from "@sveltejs/adapter-node";
 import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { requiredEnv } from "./src/lib/cms/client";
 import { exitOnMissingEnv } from "./src/lib/cms/env";
 
 // SvelteKit 3 takes its configuration here; it no longer reads svelte.config.ts.
-export default defineConfig({ plugins: [sveltekit({ adapter: adapter() }), checkEnv()] });
+export default defineConfig({ plugins: [sveltekit({ adapter: adapter() }), cmsEnv()] });
 
-// `vite dev` runs the init hook in src/hooks.server.ts only on the first request, so the dev
-// server checks the required CMS variables when it starts. Builds skip it: they must pass
-// without .env.
-function checkEnv(): Plugin {
+// The CMS client reads process.env, as in every framework. `vite dev` does not load .env into
+// process.env, and runs the init hook in src/hooks.server.ts only on the first request, so the dev
+// server loads .env and checks the required CMS variables when it starts. Builds skip both: they
+// must pass without .env.
+function cmsEnv(): Plugin {
   return {
-    name: "check-env",
+    name: "cms-env",
     apply: "serve",
-    configureServer(server) {
-      exitOnMissingEnv(requiredEnv, loadEnv(server.config.mode, server.config.root, ""));
+    configureServer() {
+      try {
+        process.loadEnvFile(".env");
+      } catch {
+        // No .env: the check below names the missing variables.
+      }
+      exitOnMissingEnv(requiredEnv, process.env);
     },
   };
 }

@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { fetchExample } from "../lib/cms/client";
-import { getClient } from "../lib/cms/sdk";
+import { fetchExample, getClient } from "../lib/cms/client";
 
 const example = await fetchExample(getClient());
 if (!example) {

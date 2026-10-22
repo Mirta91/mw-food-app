@@ -35,3 +35,8 @@ Code that runs while the module loads keeps the order it needs:
   below them.
 - Statements a config file must run before its export, such as loading `.env`, stay above it,
   and a closing `export default` of a value declared above is fine.
+
+## Imports
+
+- Scripts in `scripts/` run in Node without a bundler. In them, and in every module they import
+  (such as `src/lib/cms/client.ts`), write relative imports with the `.ts` extension.

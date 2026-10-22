@@ -1,5 +1,11 @@
+import type StoryblokClient from "storyblok-js-client";
 import { describe, expect, it, vi } from "vitest";
-import { fetchExample, requiredEnv, storyblokRegion } from "../../src/lib/cms/client";
+
+vi.mock("storyblok-js-client", () => ({ default: vi.fn() }));
+
+const { default: StoryblokClientMock } = await import("storyblok-js-client");
+const { fetchExample, getClient, requiredEnv, storyblokRegion } =
+  await import("../../src/lib/cms/client");
 
 describe("Storyblok client", () => {
   it("requires the access token", () => {
@@ -10,7 +16,7 @@ describe("Storyblok client", () => {
     const get = vi
       .fn()
       .mockResolvedValue({ data: { stories: [{ content: { title: "Hello", body: "World" } }] } });
-    expect(await fetchExample({ get })).toEqual({ title: "Hello", body: "World" });
+    expect(await fetchExample(client(get))).toEqual({ title: "Hello", body: "World" });
     expect(get).toHaveBeenCalledWith("cdn/stories", {
       content_type: "example",
       per_page: 1,
@@ -21,7 +27,7 @@ describe("Storyblok client", () => {
 
   it("returns null without stories", async () => {
     expect(
-      await fetchExample({ get: vi.fn().mockResolvedValue({ data: { stories: [] } }) }),
+      await fetchExample(client(vi.fn().mockResolvedValue({ data: { stories: [] } }))),
     ).toBeNull();
   });
 
@@ -30,4 +36,17 @@ describe("Storyblok client", () => {
     expect(storyblokRegion({ STORYBLOK_REGION: "us" })).toBe("us");
     expect(storyblokRegion({ STORYBLOK_REGION: "mars" })).toBe("eu");
   });
+
+  it("creates the SDK client once from the environment", () => {
+    vi.stubEnv("STORYBLOK_ACCESS_TOKEN", "token");
+    vi.stubEnv("STORYBLOK_REGION", "us");
+    expect(getClient()).toBe(getClient());
+    expect(StoryblokClientMock).toHaveBeenCalledTimes(1);
+    expect(StoryblokClientMock).toHaveBeenCalledWith({ accessToken: "token", region: "us" });
+    vi.unstubAllEnvs();
+  });
 });
+
+function client(get: ReturnType<typeof vi.fn>): StoryblokClient {
+  return { get } as unknown as StoryblokClient;
+}

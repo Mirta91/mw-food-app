@@ -1,5 +1,4 @@
-import { fetchExample } from "~/lib/cms/client";
-import { getClient } from "~/lib/cms/sdk";
+import { fetchExample, getClient } from "~/lib/cms/client";
 import { cmsRequest } from "../utils/cms-request";
 
 export default defineEventHandler(async () => {

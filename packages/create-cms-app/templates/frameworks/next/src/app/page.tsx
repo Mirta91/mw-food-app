@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { fetchExample } from "@/lib/cms/client";
-import { getClient } from "@/lib/cms/sdk";
+import { fetchExample, getClient } from "@/lib/cms/client";
 
 export const dynamic = "force-dynamic";
 
