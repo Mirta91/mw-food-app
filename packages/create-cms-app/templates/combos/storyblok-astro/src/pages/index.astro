@@ -3,19 +3,23 @@
 // the integration's options live in astro.config.ts, which runs during `pnpm build`, so a later
 // .env change would be ignored by `pnpm start`.
 import StoryblokClient from "storyblok-js-client";
-import CmsStatus from "../components/CmsStatus.astro";
 import Layout from "../layouts/Layout.astro";
-import { fetchExample, requiredEnv, type StoryblokApi, storyblokRegion } from "../lib/cms/client";
-import { loadCmsState, missingEnv } from "../lib/cms/state";
+import { fetchExample, type StoryblokApi, storyblokRegion } from "../lib/cms/client";
 
-const state = await loadCmsState(missingEnv(requiredEnv, process.env), () =>
-  fetchExample(
-    new StoryblokClient({
-      accessToken: process.env.STORYBLOK_ACCESS_TOKEN,
-      region: storyblokRegion(process.env),
-    }) as StoryblokApi,
-  ),
+const example = await fetchExample(
+  new StoryblokClient({
+    accessToken: process.env.STORYBLOK_ACCESS_TOKEN,
+    region: storyblokRegion(process.env),
+  }) as StoryblokApi,
 );
+if (!example) {
+  return new Response(null, { status: 404, statusText: "Not Found" });
+}
 ---
 
-<Layout><CmsStatus state={state} /></Layout>
+<Layout>
+  <main>
+    <h1>{example.title}</h1>
+    <p>{example.body}</p>
+  </main>
+</Layout>

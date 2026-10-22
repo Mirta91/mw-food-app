@@ -30,9 +30,15 @@ type Outcome = {
   log: string;
 };
 
-// Strip CMS credentials from the developer's shell so every project runs in the "missing" state.
+// Strip CMS credentials from the developer's shell so every project runs in the "missing" state,
+// and coding-agent markers so tools behave as in a terminal (Astro backgrounds `astro dev` for
+// agents and writes its output to a log file instead).
 const baseEnv: NodeJS.ProcessEnv = Object.fromEntries(
-  Object.entries(process.env).filter(([name]) => !/^(SANITY|CONTENTFUL|STORYBLOK)_/.test(name)),
+  Object.entries(process.env).filter(
+    ([name]) =>
+      !/^(SANITY|CONTENTFUL|STORYBLOK)_/.test(name) &&
+      !/^(AI_AGENT|CLAUDECODE|CLAUDE_CODE_.*|CLAUDE_PID)$/.test(name),
+  ),
 );
 Object.assign(baseEnv, {
   GIT_AUTHOR_NAME: "test-matrix",
