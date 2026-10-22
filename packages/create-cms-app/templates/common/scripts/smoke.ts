@@ -3,7 +3,7 @@
 // credentials.
 import { spawnSync } from "node:child_process";
 import { requiredEnv } from "../src/lib/cms/client.ts";
-import { missingEnv } from "../src/lib/cms/env.ts";
+import { missingEnv } from "../src/lib/utils/env.ts";
 
 try {
   process.loadEnvFile(".env");

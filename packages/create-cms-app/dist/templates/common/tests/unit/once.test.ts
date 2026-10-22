@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { once } from "../../src/lib/cms/once";
+import { once } from "../../src/lib/utils/once";
 
 describe("once", () => {
   it("creates nothing until the first call", () => {

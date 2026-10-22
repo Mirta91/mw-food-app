@@ -2,7 +2,7 @@ import node from "@astrojs/node";
 import type { AstroIntegration } from "astro";
 import { defineConfig } from "astro/config";
 import { requiredEnv } from "./src/lib/cms/client";
-import { exitOnMissingEnv } from "./src/lib/cms/env";
+import { exitOnMissingEnv } from "./src/lib/utils/env";
 
 // Server code reads process.env; load .env for `astro dev` and `astro build` as well.
 try {

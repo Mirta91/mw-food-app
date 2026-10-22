@@ -1,12 +1,12 @@
 import StoryblokClient from "storyblok-js-client";
 import type { Example } from "./example.ts";
-import { once } from "./once.ts";
+import { once } from "../utils/once.ts";
 
 export type StoryblokRegion = "eu" | "us" | "ap" | "ca" | "cn";
 
 export const requiredEnv = ["STORYBLOK_ACCESS_TOKEN"] as const;
 
-// Created on first use; see once.ts.
+// Created on first use; see src/lib/utils/once.ts.
 export const getClient = once(
   () =>
     new StoryblokClient({

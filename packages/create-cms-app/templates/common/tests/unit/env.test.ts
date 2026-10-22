@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { assertEnv, exitOnMissingEnv, missingEnv } from "../../src/lib/cms/env";
+import { assertEnv, exitOnMissingEnv, missingEnv } from "../../src/lib/utils/env";
 
 describe("missingEnv", () => {
   it("lists unset and blank variables in order", () => {

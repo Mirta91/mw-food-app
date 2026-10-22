@@ -1,10 +1,10 @@
 import { type ContentfulClientApi, createClient } from "contentful";
 import type { Example } from "./example.ts";
-import { once } from "./once.ts";
+import { once } from "../utils/once.ts";
 
 export const requiredEnv = ["CONTENTFUL_SPACE_ID", "CONTENTFUL_ACCESS_TOKEN"] as const;
 
-// Created on first use; see once.ts.
+// Created on first use; see src/lib/utils/once.ts.
 export const getClient = once(() =>
   createClient({
     space: process.env.CONTENTFUL_SPACE_ID ?? "",

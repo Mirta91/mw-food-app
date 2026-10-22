@@ -25,12 +25,12 @@ describe("common layer", () => {
       "pnpm-workspace.json",
       "scripts/check-docs.ts",
       "scripts/smoke.ts",
-      "src/lib/cms/env.ts",
       "src/lib/cms/example.ts",
-      "src/lib/cms/once.ts",
+      "src/lib/utils/env.ts",
+      "src/lib/utils/once.ts",
       "tests/e2e/smoke.spec.ts",
-      "tests/unit/cms-env.test.ts",
-      "tests/unit/cms-once.test.ts",
+      "tests/unit/env.test.ts",
+      "tests/unit/once.test.ts",
       "vitest.config.ts",
     ]);
     expect((files.get(".githooks/pre-commit")?.mode ?? 0) & 0o111).toBeTruthy();

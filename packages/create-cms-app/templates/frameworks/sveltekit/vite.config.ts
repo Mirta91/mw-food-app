@@ -2,7 +2,7 @@ import adapter from "@sveltejs/adapter-node";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig, type Plugin } from "vite";
 import { requiredEnv } from "./src/lib/cms/client";
-import { exitOnMissingEnv } from "./src/lib/cms/env";
+import { exitOnMissingEnv } from "./src/lib/utils/env";
 
 // SvelteKit 3 takes its configuration here; it no longer reads svelte.config.ts.
 export default defineConfig({ plugins: [sveltekit({ adapter: adapter() }), cmsEnv()] });
