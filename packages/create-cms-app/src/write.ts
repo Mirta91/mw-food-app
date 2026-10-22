@@ -24,20 +24,19 @@ export class TargetNotEmptyError extends Error {
   }
 }
 
-function isMissing(error: unknown): boolean {
-  return (error as NodeJS.ErrnoException).code === "ENOENT";
-}
-
 export async function assertTargetUsable(target: string): Promise<void> {
   let info;
   try {
     info = await lstat(target);
   } catch (error) {
-    if (isMissing(error)) return;
+    if (isMissing(error)) {
+      return;
+    }
     throw error;
   }
-  if (!info.isDirectory() || (await readdir(target)).length > 0)
+  if (!info.isDirectory() || (await readdir(target)).length > 0) {
     throw new TargetNotEmptyError(target);
+  }
 }
 
 // Writes into a sibling temporary directory and renames it into place, so a failure never leaves
@@ -54,14 +53,18 @@ export async function writeProject(
   try {
     await chmod(temp, 0o777 & ~process.umask());
     for (const entry of entries) {
-      if (entry.kind !== "file") continue;
+      if (entry.kind !== "file") {
+        continue;
+      }
       const file = join(temp, ...entry.path.split("/"));
       await mkdir(dirname(file), { recursive: true });
       await writeFile(file, entry.contents);
       await chmod(file, entry.mode);
     }
     for (const entry of entries) {
-      if (entry.kind !== "symlink") continue;
+      if (entry.kind !== "symlink") {
+        continue;
+      }
       const file = join(temp, ...entry.path.split("/"));
       await mkdir(dirname(file), { recursive: true });
       try {
@@ -72,7 +75,9 @@ export async function writeProject(
       }
     }
     await rmdir(target).catch((error: unknown) => {
-      if (!isMissing(error)) throw error;
+      if (!isMissing(error)) {
+        throw error;
+      }
     });
     await rename(temp, target);
   } catch (error) {
@@ -80,4 +85,8 @@ export async function writeProject(
     throw error;
   }
   return { symlinkFallback };
+}
+
+function isMissing(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException).code === "ENOENT";
 }

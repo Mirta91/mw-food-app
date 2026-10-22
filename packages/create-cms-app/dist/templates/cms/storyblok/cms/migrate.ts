@@ -19,6 +19,9 @@ if (missing.length > 0) {
 const region = (process.env.STORYBLOK_REGION?.trim() || "eu") as keyof typeof hosts;
 const base = `${hosts[region] ?? hosts.eu}/v1/spaces/${process.env.STORYBLOK_SPACE_ID}`;
 
+await createExample(mapi);
+console.log("Storyblok migrations applied.");
+
 async function mapi(path: string, init: RequestInit = {}): Promise<unknown> {
   const response = await fetch(`${base}${path}`, {
     ...init,
@@ -27,10 +30,8 @@ async function mapi(path: string, init: RequestInit = {}): Promise<unknown> {
       "Content-Type": "application/json",
     },
   });
-  if (!response.ok)
+  if (!response.ok) {
     throw new Error(`${init.method ?? "GET"} ${path}: ${response.status} ${await response.text()}`);
+  }
   return response.json();
 }
-
-await createExample(mapi);
-console.log("Storyblok migrations applied.");

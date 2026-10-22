@@ -28,16 +28,6 @@ beforeEach(async () => {
   });
 });
 
-function byPath(entries: FileEntry[], path: string): FileEntry | undefined {
-  return entries.find((entry) => entry.path === path);
-}
-
-function text(entries: FileEntry[], path: string): string {
-  const entry = byPath(entries, path);
-  if (entry?.kind !== "file") throw new Error(`no file ${path}`);
-  return entry.contents.toString("utf8");
-}
-
 describe("planProject", () => {
   it("lets later layers replace whole files", async () => {
     const entries = await planProject(templates, choices);
@@ -137,3 +127,15 @@ describe("planProject", () => {
     await expect(planProject(templates, choices)).rejects.toThrow(/cms[/\\]sanity[/\\]pkg\.json/);
   });
 });
+
+function byPath(entries: FileEntry[], path: string): FileEntry | undefined {
+  return entries.find((entry) => entry.path === path);
+}
+
+function text(entries: FileEntry[], path: string): string {
+  const entry = byPath(entries, path);
+  if (entry?.kind !== "file") {
+    throw new Error(`no file ${path}`);
+  }
+  return entry.contents.toString("utf8");
+}

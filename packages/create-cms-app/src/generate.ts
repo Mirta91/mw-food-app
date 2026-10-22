@@ -3,10 +3,10 @@ import { type Exec, type GitResult, initRepository } from "./git.ts";
 import { planProject } from "./plan.ts";
 import { writeProject } from "./write.ts";
 
-export interface GenerateResult {
+export type GenerateResult = {
   git: GitResult;
   symlinkFallback: boolean;
-}
+};
 
 export async function generate(
   choices: Choices,

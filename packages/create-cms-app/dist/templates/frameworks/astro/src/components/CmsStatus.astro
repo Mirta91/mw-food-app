@@ -1,9 +1,9 @@
 ---
 import { type CmsState, describeCmsState } from "../lib/cms/state";
 
-interface Props {
+type Props = {
   state: CmsState;
-}
+};
 
 const { state } = Astro.props;
 const { title, detail } = describeCmsState(state);

@@ -19,10 +19,6 @@ beforeEach(async () => {
   target = join(parent, "my-app");
 });
 
-async function leftovers(): Promise<string[]> {
-  return (await readdir(parent)).filter((name) => name.includes(".tmp-"));
-}
-
 describe("writeProject", () => {
   it("writes files, modes and the symlink", async () => {
     const result = await writeProject(target, entries);
@@ -80,3 +76,7 @@ describe("writeProject", () => {
     expect(mode).toBe(0o777 & ~process.umask());
   });
 });
+
+async function leftovers(): Promise<string[]> {
+  return (await readdir(parent)).filter((name) => name.includes(".tmp-"));
+}

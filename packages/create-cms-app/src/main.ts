@@ -16,6 +16,8 @@ try {
   });
 } catch (error) {
   clack.log.error(error instanceof Error ? error.message : String(error));
-  if (process.env.DEBUG && error instanceof Error) console.error(error.stack);
+  if (process.env.DEBUG && error instanceof Error) {
+    console.error(error.stack);
+  }
   process.exitCode = 1;
 }

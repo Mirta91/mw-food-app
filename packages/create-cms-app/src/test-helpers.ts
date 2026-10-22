@@ -32,8 +32,9 @@ export function scriptedPrompter(answers: unknown[]): { prompter: Prompter; aske
   ) => {
     asked.push(message);
     const answer = queue.shift();
-    if (validate && typeof answer === "string" && validate(answer))
+    if (validate && typeof answer === "string" && validate(answer)) {
       throw new Error(`invalid answer ${answer}`);
+    }
     return answer as never;
   };
   return {

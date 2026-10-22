@@ -1,16 +1,16 @@
 import { createClient } from "contentful";
 import type { Example } from "./state";
 
-export const requiredEnv = ["CONTENTFUL_SPACE_ID", "CONTENTFUL_ACCESS_TOKEN"] as const;
-
 // The subset of the Contentful delivery client that the app uses.
-export interface ContentfulEntries {
+export type ContentfulEntries = {
   getEntries(query: {
     content_type: string;
     limit: number;
     order: string[];
   }): Promise<{ items: Array<{ fields: Record<string, unknown> }> }>;
-}
+};
+
+export const requiredEnv = ["CONTENTFUL_SPACE_ID", "CONTENTFUL_ACCESS_TOKEN"] as const;
 
 export async function fetchExample(client: ContentfulEntries): Promise<Example | null> {
   const { items } = await client.getEntries({

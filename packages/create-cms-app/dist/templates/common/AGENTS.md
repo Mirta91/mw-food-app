@@ -84,6 +84,8 @@ user. If an item cannot be met, say which one and why instead of reporting the s
   framework configuration
 - [CMS](docs/instructions/cms.md) — before changing content types, migrations, the CMS client or
   environment variables
+- [Code style](docs/instructions/code-style.md) — before writing or changing TypeScript or
+  JavaScript code
 - [Testing](docs/instructions/testing.md) — before writing, running or configuring tests
 - [Linting and formatting](docs/instructions/linting-and-formatting.md) — before changing lint or
   format rules, or when a lint or format check fails

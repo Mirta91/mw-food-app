@@ -24,8 +24,9 @@ const exists = await client.contentType
   .get({ contentTypeId: exampleContentType.id })
   .then(() => true)
   .catch(() => false);
-if (exists) console.log(`Content type ${exampleContentType.id} exists, skipping migration.`);
-else
+if (exists) {
+  console.log(`Content type ${exampleContentType.id} exists, skipping migration.`);
+} else {
   await runMigration({
     migrationFunction: migration,
     spaceId,
@@ -33,6 +34,7 @@ else
     accessToken,
     yes: true,
   });
+}
 
 const entries = await client.entry.getMany({
   query: { content_type: exampleContentType.id, limit: 1 },

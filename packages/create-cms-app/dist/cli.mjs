@@ -1184,15 +1184,9 @@ import { resolve } from "node:path";
 // src/git.ts
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-var execFileAsync = promisify(execFile);
 var execFileExec = async (command, args, { cwd }) => {
   await execFileAsync(command, args, { cwd });
 };
-function messageOf(error) {
-  const stderr = error.stderr;
-  if (typeof stderr === "string" && stderr.trim()) return stderr.trim();
-  return error instanceof Error ? error.message : String(error);
-}
 async function initRepository(dir, exec2 = execFileExec) {
   try {
     await exec2("git", ["--version"], { cwd: dir });
@@ -1207,6 +1201,14 @@ async function initRepository(dir, exec2 = execFileExec) {
   } catch (error) {
     return { status: "commit-failed", message: messageOf(error) };
   }
+}
+var execFileAsync = promisify(execFile);
+function messageOf(error) {
+  const stderr = error.stderr;
+  if (typeof stderr === "string" && stderr.trim()) {
+    return stderr.trim();
+  }
+  return error instanceof Error ? error.message : String(error);
 }
 
 // src/plan.ts
@@ -1230,15 +1232,19 @@ function cmsLabel(cms) {
 function frameworkLabel(framework) {
   return FRAMEWORK_OPTIONS.find((option) => option.value === framework)?.label ?? framework;
 }
-var PROJECT_NAME = /^[a-z0-9][a-z0-9-]*$/;
 function validateProjectName(name) {
-  if (!name) return "Enter a project name.";
-  if (name.length > 214) return "Use at most 214 characters.";
+  if (!name) {
+    return "Enter a project name.";
+  }
+  if (name.length > 214) {
+    return "Use at most 214 characters.";
+  }
   if (!PROJECT_NAME.test(name)) {
     return "Use lowercase letters, digits and '-', starting with a letter or digit.";
   }
   return void 0;
 }
+var PROJECT_NAME = /^[a-z0-9][a-z0-9-]*$/;
 
 // src/layers.ts
 import { existsSync } from "node:fs";
@@ -1254,22 +1260,23 @@ function layerDirs(templatesDir2, combo) {
     join(templatesDir2, "combos", `${combo.cms}-${combo.framework}`)
   ];
   for (const dir of dirs) {
-    if (!existsSync(dir)) throw new Error(`Template layer missing: ${relative(templatesDir2, dir)}`);
+    if (!existsSync(dir)) {
+      throw new Error(`Template layer missing: ${relative(templatesDir2, dir)}`);
+    }
   }
   return dirs;
 }
 async function readLayer(dir) {
   const files = /* @__PURE__ */ new Map();
   for (const entry of await readdir(dir, { recursive: true, withFileTypes: true })) {
-    if (!entry.isFile()) continue;
+    if (!entry.isFile()) {
+      continue;
+    }
     const absolute = join(entry.parentPath, entry.name);
     const [contents, info] = await Promise.all([readFile(absolute), stat(absolute)]);
     files.set(relative(dir, absolute).split(sep).join("/"), { contents, mode: info.mode & 511 });
   }
   return files;
-}
-function isObject(value) {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function deepMerge(base, overlay) {
   const merged = { ...base };
@@ -1288,7 +1295,9 @@ function renderYaml(value, indent = "") {
   let out = "";
   for (const [rawKey, item] of Object.entries(value)) {
     const key = /^[A-Za-z0-9_-]+$/.test(rawKey) ? rawKey : JSON.stringify(rawKey);
-    if (Array.isArray(item)) throw new Error(`renderYaml does not support arrays (key ${rawKey})`);
+    if (Array.isArray(item)) {
+      throw new Error(`renderYaml does not support arrays (key ${rawKey})`);
+    }
     if (isObject(item)) {
       out += Object.keys(item).length === 0 ? `${indent}${key}: {}
 ` : `${indent}${key}:
@@ -1300,12 +1309,69 @@ ${renderYaml(item, `${indent}  `)}`;
   }
   return out;
 }
+function isObject(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 // src/plan.ts
+async function planProject(templatesDir2, choices) {
+  const tokens = {
+    __PROJECT_NAME__: choices.name,
+    __CMS__: cmsLabel(choices.cms),
+    __FRAMEWORK__: frameworkLabel(choices.framework)
+  };
+  const files = /* @__PURE__ */ new Map();
+  let pkg = {};
+  let workspace = {};
+  for (const dir of layerDirs(templatesDir2, choices)) {
+    for (const [path, file] of await readLayer(dir)) {
+      const source = relative2(templatesDir2, join2(dir, path));
+      if (path === PKG_FRAGMENT) {
+        pkg = deepMerge(pkg, parseFragment(file, source));
+      } else if (path === WORKSPACE_FRAGMENT) {
+        workspace = deepMerge(workspace, parseFragment(file, source));
+      } else {
+        files.set(outputPath(path), file);
+      }
+    }
+  }
+  const entries = [...files].map(([path, file]) => ({
+    kind: "file",
+    path,
+    contents: replaceTokens(file.contents, tokens),
+    mode: file.mode
+  }));
+  if (Object.keys(pkg).length > 0) {
+    const json = Buffer.from(`${JSON.stringify(orderPackageJson(pkg), null, 2)}
+`);
+    entries.push({
+      kind: "file",
+      path: "package.json",
+      contents: replaceTokens(json, tokens),
+      mode: 420
+    });
+  }
+  if (Object.keys(workspace).length > 0) {
+    entries.push({
+      kind: "file",
+      path: "pnpm-workspace.yaml",
+      contents: Buffer.from(renderYaml(workspace)),
+      mode: 420
+    });
+  }
+  if (files.has("AGENTS.md")) {
+    entries.push({ kind: "symlink", path: "CLAUDE.md", target: "AGENTS.md" });
+  }
+  return entries.sort((a2, b) => a2.path < b.path ? -1 : a2.path > b.path ? 1 : 0);
+}
 function replaceTokens(contents, tokens) {
-  if (contents.includes(0)) return contents;
+  if (contents.includes(0)) {
+    return contents;
+  }
   let text2 = contents.toString("utf8");
-  for (const [token, value] of Object.entries(tokens)) text2 = text2.replaceAll(token, value);
+  for (const [token, value] of Object.entries(tokens)) {
+    text2 = text2.replaceAll(token, value);
+  }
   return Buffer.from(text2, "utf8");
 }
 function parseFragment(file, path) {
@@ -1342,52 +1408,6 @@ function orderPackageJson(pkg) {
     )
   );
 }
-async function planProject(templatesDir2, choices) {
-  const tokens = {
-    __PROJECT_NAME__: choices.name,
-    __CMS__: cmsLabel(choices.cms),
-    __FRAMEWORK__: frameworkLabel(choices.framework)
-  };
-  const files = /* @__PURE__ */ new Map();
-  let pkg = {};
-  let workspace = {};
-  for (const dir of layerDirs(templatesDir2, choices)) {
-    for (const [path, file] of await readLayer(dir)) {
-      const source = relative2(templatesDir2, join2(dir, path));
-      if (path === PKG_FRAGMENT) pkg = deepMerge(pkg, parseFragment(file, source));
-      else if (path === WORKSPACE_FRAGMENT)
-        workspace = deepMerge(workspace, parseFragment(file, source));
-      else files.set(outputPath(path), file);
-    }
-  }
-  const entries = [...files].map(([path, file]) => ({
-    kind: "file",
-    path,
-    contents: replaceTokens(file.contents, tokens),
-    mode: file.mode
-  }));
-  if (Object.keys(pkg).length > 0) {
-    const json = Buffer.from(`${JSON.stringify(orderPackageJson(pkg), null, 2)}
-`);
-    entries.push({
-      kind: "file",
-      path: "package.json",
-      contents: replaceTokens(json, tokens),
-      mode: 420
-    });
-  }
-  if (Object.keys(workspace).length > 0) {
-    entries.push({
-      kind: "file",
-      path: "pnpm-workspace.yaml",
-      contents: Buffer.from(renderYaml(workspace)),
-      mode: 420
-    });
-  }
-  if (files.has("AGENTS.md"))
-    entries.push({ kind: "symlink", path: "CLAUDE.md", target: "AGENTS.md" });
-  return entries.sort((a2, b) => a2.path < b.path ? -1 : a2.path > b.path ? 1 : 0);
-}
 
 // src/write.ts
 import {
@@ -1412,19 +1432,19 @@ var TargetNotEmptyError = class extends Error {
     this.target = target;
   }
 };
-function isMissing(error) {
-  return error.code === "ENOENT";
-}
 async function assertTargetUsable(target) {
   let info;
   try {
     info = await lstat(target);
   } catch (error) {
-    if (isMissing(error)) return;
+    if (isMissing(error)) {
+      return;
+    }
     throw error;
   }
-  if (!info.isDirectory() || (await readdir2(target)).length > 0)
+  if (!info.isDirectory() || (await readdir2(target)).length > 0) {
     throw new TargetNotEmptyError(target);
+  }
 }
 async function writeProject(target, entries, options = {}) {
   const link = options.symlink ?? symlink;
@@ -1434,14 +1454,18 @@ async function writeProject(target, entries, options = {}) {
   try {
     await chmod(temp, 511 & ~process.umask());
     for (const entry of entries) {
-      if (entry.kind !== "file") continue;
+      if (entry.kind !== "file") {
+        continue;
+      }
       const file = join3(temp, ...entry.path.split("/"));
       await mkdir(dirname(file), { recursive: true });
       await writeFile(file, entry.contents);
       await chmod(file, entry.mode);
     }
     for (const entry of entries) {
-      if (entry.kind !== "symlink") continue;
+      if (entry.kind !== "symlink") {
+        continue;
+      }
       const file = join3(temp, ...entry.path.split("/"));
       await mkdir(dirname(file), { recursive: true });
       try {
@@ -1452,7 +1476,9 @@ async function writeProject(target, entries, options = {}) {
       }
     }
     await rmdir(target).catch((error) => {
-      if (!isMissing(error)) throw error;
+      if (!isMissing(error)) {
+        throw error;
+      }
     });
     await rename(temp, target);
   } catch (error) {
@@ -1460,6 +1486,9 @@ async function writeProject(target, entries, options = {}) {
     throw error;
   }
   return { symlinkFallback };
+}
+function isMissing(error) {
+  return error.code === "ENOENT";
 }
 
 // src/generate.ts
@@ -1484,11 +1513,17 @@ async function askChoices(prompter) {
     placeholder: "my-cms-app",
     validate: validateProjectName
   });
-  if (typeof name === "symbol") return void 0;
+  if (typeof name === "symbol") {
+    return void 0;
+  }
   const cms = await prompter.select({ message: "CMS", options: CMS_OPTIONS });
-  if (typeof cms === "symbol") return void 0;
+  if (typeof cms === "symbol") {
+    return void 0;
+  }
   const framework = await prompter.select({ message: "Web framework", options: FRAMEWORK_OPTIONS });
-  if (typeof framework === "symbol") return void 0;
+  if (typeof framework === "symbol") {
+    return void 0;
+  }
   prompter.note(
     [
       `Project:   ${name}`,
@@ -1499,7 +1534,9 @@ async function askChoices(prompter) {
     "Summary"
   );
   const confirmed = await prompter.confirm({ message: "Create the project?" });
-  if (confirmed !== true) return void 0;
+  if (confirmed !== true) {
+    return void 0;
+  }
   return { name, cms, framework };
 }
 
@@ -1529,7 +1566,9 @@ async function run(context) {
   try {
     await assertTargetUsable(target);
   } catch (error) {
-    if (!(error instanceof TargetNotEmptyError)) throw error;
+    if (!(error instanceof TargetNotEmptyError)) {
+      throw error;
+    }
     log2.error(`${choices.name} already exists and is not empty. Choose another name or remove it.`);
     return 1;
   }
@@ -1565,6 +1604,8 @@ try {
   });
 } catch (error) {
   log.error(error instanceof Error ? error.message : String(error));
-  if (process.env.DEBUG && error instanceof Error) console.error(error.stack);
+  if (process.env.DEBUG && error instanceof Error) {
+    console.error(error.stack);
+  }
   process.exitCode = 1;
 }

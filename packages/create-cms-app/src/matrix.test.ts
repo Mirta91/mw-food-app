@@ -18,6 +18,7 @@ const REQUIRED = [
   "README.md",
   "docs/instructions/cms.md",
   "docs/instructions/framework.md",
+  "docs/instructions/code-style.md",
   "docs/instructions/linting-and-formatting.md",
   "docs/instructions/testing.md",
   "package.json",
@@ -81,7 +82,9 @@ const SCRIPTS = [
 
 function text(entries: FileEntry[], path: string): string {
   const entry = entries.find((item) => item.path === path);
-  if (entry?.kind !== "file") throw new Error(`missing ${path}`);
+  if (entry?.kind !== "file") {
+    throw new Error(`missing ${path}`);
+  }
   return entry.contents.toString("utf8");
 }
 
@@ -136,17 +139,21 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
         /requiredEnv = \[([^\]]*)\]/.exec(text(all, "src/lib/cms/client.ts"))?.[1] ?? "";
       const names = required.match(/[A-Z_]+/g) ?? [];
       expect(names).not.toHaveLength(0);
-      for (const name of names) expect(text(all, ".env.example")).toContain(`${name}=`);
+      for (const name of names) {
+        expect(text(all, ".env.example")).toContain(`${name}=`);
+      }
     });
 
     it("documents every .env.example variable and every cms script in the README", async () => {
       const all = await entries();
       const readme = text(all, "README.md");
-      for (const name of text(all, ".env.example").match(/^[A-Z_]+(?==)/gm) ?? [])
+      for (const name of text(all, ".env.example").match(/^[A-Z_]+(?==)/gm) ?? []) {
         expect(readme, name).toContain(`\`${name}\``);
+      }
       const scripts = Object.keys(JSON.parse(text(all, "package.json")).scripts);
-      for (const script of scripts.filter((name) => name.startsWith("cms:")))
+      for (const script of scripts.filter((name) => name.startsWith("cms:"))) {
         expect(readme, script).toContain(`pnpm ${script}`);
+      }
     });
 
     it.runIf(cms === "sanity")(
@@ -167,8 +174,9 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
       await writeProject(target, await entries());
       expect(checkDocs(target).errors).toEqual([]);
       const readme = await readFile(join(target, "README.md"), "utf8");
-      for (const [, link] of readme.matchAll(/\]\(([^)#:]+)\)/g))
+      for (const [, link] of readme.matchAll(/\]\(([^)#:]+)\)/g)) {
         await expect(access(join(target, link ?? "")), link).resolves.toBeUndefined();
+      }
       expect(await readFile(join(target, "CLAUDE.md"), "utf8")).toBe(
         await readFile(join(target, "AGENTS.md"), "utf8"),
       );

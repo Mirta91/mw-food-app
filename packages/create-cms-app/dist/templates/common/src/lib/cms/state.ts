@@ -1,7 +1,7 @@
-export interface Example {
+export type Example = {
   title: string;
   body: string;
-}
+};
 
 export type CmsState =
   | { kind: "example"; example: Example }
@@ -21,22 +21,15 @@ export async function loadCmsState(
   missing: string[],
   load: () => Promise<Example | null>,
 ): Promise<CmsState> {
-  if (missing.length > 0) return { kind: "missing-env", missing };
+  if (missing.length > 0) {
+    return { kind: "missing-env", missing };
+  }
   try {
     const example = await load();
     return example ? { kind: "example", example } : { kind: "empty" };
   } catch (error) {
     return { kind: "error", message: errorMessage(error) };
   }
-}
-
-// Some SDKs (storyblok-js-client) reject with plain objects that carry a message.
-function errorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (typeof error === "object" && error !== null && "message" in error) {
-    return String(error.message);
-  }
-  return String(error);
 }
 
 export function describeCmsState(state: CmsState): { title: string; detail: string } {
@@ -56,4 +49,15 @@ export function describeCmsState(state: CmsState): { title: string; detail: stri
     case "error":
       return { title: "Could not load content from the CMS", detail: state.message };
   }
+}
+
+// Some SDKs (storyblok-js-client) reject with plain objects that carry a message.
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === "object" && error !== null && "message" in error) {
+    return String(error.message);
+  }
+  return String(error);
 }

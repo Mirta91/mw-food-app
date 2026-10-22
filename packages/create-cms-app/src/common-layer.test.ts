@@ -17,6 +17,7 @@ describe("common layer", () => {
       ".oxlintrc.json",
       "AGENTS.md",
       "_gitignore",
+      "docs/instructions/code-style.md",
       "docs/instructions/linting-and-formatting.md",
       "docs/instructions/testing.md",
       "pkg.json",
@@ -55,7 +56,8 @@ describe("common layer", () => {
       version: "^11.28.0",
       onFail: "download",
     });
-    for (const version of Object.values<string>(pkg.devDependencies))
+    for (const version of Object.values<string>(pkg.devDependencies)) {
       expect(version).toMatch(/^\d+\.\d+\.\d+$/);
+    }
   });
 });

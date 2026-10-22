@@ -12,10 +12,10 @@ export type JsonValue =
   | { [key: string]: JsonValue };
 export type JsonObject = { [key: string]: JsonValue };
 
-export interface TemplateFile {
+export type TemplateFile = {
   contents: Buffer;
   mode: number;
-}
+};
 
 export const PKG_FRAGMENT = "pkg.json";
 export const WORKSPACE_FRAGMENT = "pnpm-workspace.json";
@@ -29,7 +29,9 @@ export function layerDirs(templatesDir: string, combo: Combo): string[] {
     join(templatesDir, "combos", `${combo.cms}-${combo.framework}`),
   ];
   for (const dir of dirs) {
-    if (!existsSync(dir)) throw new Error(`Template layer missing: ${relative(templatesDir, dir)}`);
+    if (!existsSync(dir)) {
+      throw new Error(`Template layer missing: ${relative(templatesDir, dir)}`);
+    }
   }
   return dirs;
 }
@@ -37,16 +39,14 @@ export function layerDirs(templatesDir: string, combo: Combo): string[] {
 export async function readLayer(dir: string): Promise<Map<string, TemplateFile>> {
   const files = new Map<string, TemplateFile>();
   for (const entry of await readdir(dir, { recursive: true, withFileTypes: true })) {
-    if (!entry.isFile()) continue;
+    if (!entry.isFile()) {
+      continue;
+    }
     const absolute = join(entry.parentPath, entry.name);
     const [contents, info] = await Promise.all([readFile(absolute), stat(absolute)]);
     files.set(relative(dir, absolute).split(sep).join("/"), { contents, mode: info.mode & 0o777 });
   }
   return files;
-}
-
-function isObject(value: JsonValue | undefined): value is JsonObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export function deepMerge(base: JsonObject, overlay: JsonObject): JsonObject {
@@ -70,7 +70,9 @@ export function renderYaml(value: JsonObject, indent = ""): string {
   let out = "";
   for (const [rawKey, item] of Object.entries(value)) {
     const key = /^[A-Za-z0-9_-]+$/.test(rawKey) ? rawKey : JSON.stringify(rawKey);
-    if (Array.isArray(item)) throw new Error(`renderYaml does not support arrays (key ${rawKey})`);
+    if (Array.isArray(item)) {
+      throw new Error(`renderYaml does not support arrays (key ${rawKey})`);
+    }
     if (isObject(item)) {
       out +=
         Object.keys(item).length === 0
@@ -81,4 +83,8 @@ export function renderYaml(value: JsonObject, indent = ""): string {
     }
   }
   return out;
+}
+
+function isObject(value: JsonValue | undefined): value is JsonObject {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -10,32 +10,11 @@ import { generate } from "../src/generate.ts";
 import type { Exec } from "../src/git.ts";
 import { sourceTemplatesDir } from "../src/paths.ts";
 
-interface Outcome {
+type Outcome = {
   id: string;
   failedStep?: string;
   log: string;
-}
-
-function parseArgs(argv: string[]): { combos: Combo[]; concurrency: number; keep: boolean } {
-  let concurrency = 1;
-  let keep = false;
-  const ids: string[] = [];
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i] ?? "";
-    if (arg === "--concurrency") concurrency = Number(argv[++i]);
-    else if (arg === "--keep") keep = true;
-    else ids.push(arg);
-  }
-  const known = allCombos();
-  const unknown = ids.filter((id) => !known.some((combo) => comboId(combo) === id));
-  if (unknown.length > 0 || !(concurrency >= 1)) {
-    console.error(`Unknown combination or bad --concurrency: ${unknown.join(", ")}`);
-    console.error(`Known: ${known.map(comboId).join(", ")}`);
-    process.exit(2);
-  }
-  const combos = ids.length === 0 ? known : known.filter((combo) => ids.includes(comboId(combo)));
-  return { combos, concurrency, keep };
-}
+};
 
 // Strip CMS credentials from the developer's shell so every project runs in the "missing" state.
 const baseEnv: NodeJS.ProcessEnv = Object.fromEntries(
@@ -47,6 +26,56 @@ Object.assign(baseEnv, {
   GIT_COMMITTER_NAME: "test-matrix",
   GIT_COMMITTER_EMAIL: "test-matrix@example.invalid",
 });
+
+const { combos, concurrency, keep } = parseArgs(process.argv.slice(2));
+const work = await mkdtemp(join(tmpdir(), "create-cms-app-matrix-"));
+console.log(`Matrix: ${combos.length} combination(s) in ${work}`);
+
+const outcomes = await pool(combos, concurrency, async (combo, index) => {
+  const outcome = await runCombo(combo, index, work);
+  await writeFile(join(work, `${outcome.id}.log`), outcome.log);
+  console.log(
+    outcome.failedStep ? `FAIL ${outcome.id} (${outcome.failedStep})` : `ok   ${outcome.id}`,
+  );
+  return outcome;
+});
+
+const failed = outcomes.filter((outcome) => outcome.failedStep);
+if (failed.length > 0) {
+  console.error(
+    `\n${failed.length} failed. Logs: ${failed.map((o) => join(work, `${o.id}.log`)).join(" ")}`,
+  );
+  process.exit(1);
+}
+if (!keep) {
+  await rm(work, { recursive: true, force: true });
+}
+console.log(`\nAll ${outcomes.length} passed.`);
+
+function parseArgs(argv: string[]): { combos: Combo[]; concurrency: number; keep: boolean } {
+  let concurrency = 1;
+  let keep = false;
+  const ids: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i] ?? "";
+    if (arg === "--concurrency") {
+      concurrency = Number(argv[++i]);
+    } else if (arg === "--keep") {
+      keep = true;
+    } else {
+      ids.push(arg);
+    }
+  }
+  const known = allCombos();
+  const unknown = ids.filter((id) => !known.some((combo) => comboId(combo) === id));
+  if (unknown.length > 0 || !(concurrency >= 1)) {
+    console.error(`Unknown combination or bad --concurrency: ${unknown.join(", ")}`);
+    console.error(`Known: ${known.map(comboId).join(", ")}`);
+    process.exit(2);
+  }
+  const combos = ids.length === 0 ? known : known.filter((combo) => ids.includes(comboId(combo)));
+  return { combos, concurrency, keep };
+}
 
 function exec(
   command: string,
@@ -77,18 +106,23 @@ async function runCombo(combo: Combo, index: number, work: string): Promise<Outc
   ) => {
     const result = await exec(command, args, dir, env);
     log += result.output;
-    if (result.code !== 0 || (expect && !expect(result.output))) throw new Error(name);
+    if (result.code !== 0 || (expect && !expect(result.output))) {
+      throw new Error(name);
+    }
     return result.output;
   };
   try {
     const gitExec: Exec = async (command, args, { cwd }) => {
       const result = await exec(command, args, cwd, env);
       log += result.output;
-      if (result.code !== 0)
+      if (result.code !== 0) {
         throw Object.assign(new Error(result.output), { stderr: result.output });
+      }
     };
     const result = await generate({ name: id, ...combo }, dir, sourceTemplatesDir, gitExec);
-    if (result.git.status !== "committed") throw new Error(`generate (git: ${result.git.status})`);
+    if (result.git.status !== "committed") {
+      throw new Error(`generate (git: ${result.git.status})`);
+    }
     await step(
       "one initial commit",
       "git",
@@ -125,26 +159,3 @@ async function pool<T, R>(
   await Promise.all(lanes);
   return results;
 }
-
-const { combos, concurrency, keep } = parseArgs(process.argv.slice(2));
-const work = await mkdtemp(join(tmpdir(), "create-cms-app-matrix-"));
-console.log(`Matrix: ${combos.length} combination(s) in ${work}`);
-
-const outcomes = await pool(combos, concurrency, async (combo, index) => {
-  const outcome = await runCombo(combo, index, work);
-  await writeFile(join(work, `${outcome.id}.log`), outcome.log);
-  console.log(
-    outcome.failedStep ? `FAIL ${outcome.id} (${outcome.failedStep})` : `ok   ${outcome.id}`,
-  );
-  return outcome;
-});
-
-const failed = outcomes.filter((outcome) => outcome.failedStep);
-if (failed.length > 0) {
-  console.error(
-    `\n${failed.length} failed. Logs: ${failed.map((o) => join(work, `${o.id}.log`)).join(" ")}`,
-  );
-  process.exit(1);
-}
-if (!keep) await rm(work, { recursive: true, force: true });
-console.log(`\nAll ${outcomes.length} passed.`);

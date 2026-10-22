@@ -16,25 +16,6 @@ const triggerPattern = /^\s*[-*]\s+\[[^\]]+\]\([^)]+\)\s+[—–-]\s+\S/;
 const errors = [];
 const warnings = [];
 
-function instructionLinks(file) {
-  const lines = readFileSync(join(root, file), "utf8").split("\n");
-  const links = [];
-  let inFence = false;
-  lines.forEach((rawLine, index) => {
-    if (/^\s*(```|~~~)/.test(rawLine)) inFence = !inFence;
-    if (inFence) return;
-    const line = rawLine.replace(/`[^`]*`/g, "");
-    for (const [, target] of line.matchAll(linkPattern)) {
-      if (/^[a-z]+:/i.test(target)) continue;
-      const resolved = normalize(join(dirname(file), target));
-      if (dirname(resolved) === instructionsDir && resolved.endsWith(".md")) {
-        links.push({ target: resolved, line, lineNumber: index + 1 });
-      }
-    }
-  });
-  return links;
-}
-
 const instructionFiles = existsSync(join(root, instructionsDir))
   ? readdirSync(join(root, instructionsDir))
       .filter((name) => name.endsWith(".md"))
@@ -51,16 +32,22 @@ for (const link of instructionLinks(agentsFile)) {
   }
 }
 for (const [target, count] of counts) {
-  if (count > 1) errors.push(`${agentsFile}: ${target} is linked ${count} times, allowed once`);
+  if (count > 1) {
+    errors.push(`${agentsFile}: ${target} is linked ${count} times, allowed once`);
+  }
 }
 
 const reachable = new Set(counts.keys());
 const queue = [...reachable];
 while (queue.length > 0) {
   const file = queue.shift();
-  if (!existsSync(join(root, file))) continue;
+  if (!existsSync(join(root, file))) {
+    continue;
+  }
   for (const link of instructionLinks(file)) {
-    if (link.target === file) continue;
+    if (link.target === file) {
+      continue;
+    }
     warnings.push(
       `${file}:${link.lineNumber}: links to ${link.target}; prefer linking instruction files only from ${agentsFile}`,
     );
@@ -71,10 +58,43 @@ while (queue.length > 0) {
   }
 }
 for (const file of instructionFiles) {
-  if (!reachable.has(file)) errors.push(`${file}: not reachable from ${agentsFile}`);
+  if (!reachable.has(file)) {
+    errors.push(`${file}: not reachable from ${agentsFile}`);
+  }
 }
 
-for (const warning of warnings) console.warn(`warning: ${warning}`);
-for (const error of errors) console.error(`error: ${error}`);
-if (errors.length > 0) process.exit(1);
+for (const warning of warnings) {
+  console.warn(`warning: ${warning}`);
+}
+for (const error of errors) {
+  console.error(`error: ${error}`);
+}
+if (errors.length > 0) {
+  process.exit(1);
+}
 console.log(`Instruction links OK (${instructionFiles.length} instruction files)`);
+
+function instructionLinks(file) {
+  const lines = readFileSync(join(root, file), "utf8").split("\n");
+  const links = [];
+  let inFence = false;
+  lines.forEach((rawLine, index) => {
+    if (/^\s*(```|~~~)/.test(rawLine)) {
+      inFence = !inFence;
+    }
+    if (inFence) {
+      return;
+    }
+    const line = rawLine.replace(/`[^`]*`/g, "");
+    for (const [, target] of line.matchAll(linkPattern)) {
+      if (/^[a-z]+:/i.test(target)) {
+        continue;
+      }
+      const resolved = normalize(join(dirname(file), target));
+      if (dirname(resolved) === instructionsDir && resolved.endsWith(".md")) {
+        links.push({ target: resolved, line, lineNumber: index + 1 });
+      }
+    }
+  });
+  return links;
+}

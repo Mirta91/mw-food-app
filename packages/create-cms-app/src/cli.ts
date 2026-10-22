@@ -4,21 +4,21 @@ import type { Exec } from "./git.ts";
 import { askChoices, type Prompter } from "./prompts.ts";
 import { assertTargetUsable, TargetNotEmptyError } from "./write.ts";
 
-export interface Logger {
+export type Logger = {
   info(message: string): void;
   warn(message: string): void;
   error(message: string): void;
   success(message: string): void;
-}
+};
 
-export interface CliContext {
+export type CliContext = {
   prompter: Prompter;
   log: Logger;
   cwd: string;
   templatesDir: string;
   interactive: boolean;
   exec?: Exec;
-}
+};
 
 export function nextSteps(name: string): string {
   return [
@@ -46,7 +46,9 @@ export async function run(context: CliContext): Promise<number> {
   try {
     await assertTargetUsable(target);
   } catch (error) {
-    if (!(error instanceof TargetNotEmptyError)) throw error;
+    if (!(error instanceof TargetNotEmptyError)) {
+      throw error;
+    }
     log.error(`${choices.name} already exists and is not empty. Choose another name or remove it.`);
     return 1;
   }

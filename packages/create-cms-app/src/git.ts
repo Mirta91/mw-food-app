@@ -8,17 +8,9 @@ export type GitResult =
   | { status: "git-missing" }
   | { status: "commit-failed"; message: string };
 
-const execFileAsync = promisify(execFile);
-
 export const execFileExec: Exec = async (command, args, { cwd }) => {
   await execFileAsync(command, args, { cwd });
 };
-
-function messageOf(error: unknown): string {
-  const stderr = (error as { stderr?: unknown }).stderr;
-  if (typeof stderr === "string" && stderr.trim()) return stderr.trim();
-  return error instanceof Error ? error.message : String(error);
-}
 
 export async function initRepository(dir: string, exec: Exec = execFileExec): Promise<GitResult> {
   try {
@@ -35,4 +27,14 @@ export async function initRepository(dir: string, exec: Exec = execFileExec): Pr
   } catch (error) {
     return { status: "commit-failed", message: messageOf(error) };
   }
+}
+
+const execFileAsync = promisify(execFile);
+
+function messageOf(error: unknown): string {
+  const stderr = (error as { stderr?: unknown }).stderr;
+  if (typeof stderr === "string" && stderr.trim()) {
+    return stderr.trim();
+  }
+  return error instanceof Error ? error.message : String(error);
 }

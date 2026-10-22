@@ -8,7 +8,7 @@ import {
   validateProjectName,
 } from "./choices.ts";
 
-export interface Prompter {
+export type Prompter = {
   text(options: {
     message: string;
     placeholder?: string;
@@ -20,7 +20,7 @@ export interface Prompter {
   }): Promise<T | symbol>;
   confirm(options: { message: string }): Promise<boolean | symbol>;
   note(message: string, title: string): void;
-}
+};
 
 export const clackPrompter: Prompter = {
   text: (options) => clack.text(options),
@@ -43,11 +43,17 @@ export async function askChoices(prompter: Prompter): Promise<Choices | undefine
     placeholder: "my-cms-app",
     validate: validateProjectName,
   });
-  if (typeof name === "symbol") return undefined;
+  if (typeof name === "symbol") {
+    return undefined;
+  }
   const cms = await prompter.select({ message: "CMS", options: CMS_OPTIONS });
-  if (typeof cms === "symbol") return undefined;
+  if (typeof cms === "symbol") {
+    return undefined;
+  }
   const framework = await prompter.select({ message: "Web framework", options: FRAMEWORK_OPTIONS });
-  if (typeof framework === "symbol") return undefined;
+  if (typeof framework === "symbol") {
+    return undefined;
+  }
   prompter.note(
     [
       `Project:   ${name}`,
@@ -58,6 +64,8 @@ export async function askChoices(prompter: Prompter): Promise<Choices | undefine
     "Summary",
   );
   const confirmed = await prompter.confirm({ message: "Create the project?" });
-  if (confirmed !== true) return undefined;
+  if (confirmed !== true) {
+    return undefined;
+  }
   return { name, cms, framework };
 }

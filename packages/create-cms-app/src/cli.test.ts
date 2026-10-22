@@ -94,8 +94,9 @@ describe("run", () => {
 
   it("warns and succeeds when the commit fails", async () => {
     const exec: Exec = async (_command, args) => {
-      if (args[0] === "commit")
+      if (args[0] === "commit") {
         throw Object.assign(new Error("failed"), { stderr: "Author identity unknown" });
+      }
     };
     expect(await run(context({ exec }))).toBe(0);
     expect(logs.join("\n")).toMatch(

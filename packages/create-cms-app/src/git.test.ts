@@ -13,7 +13,9 @@ function recordingExec(fail?: (args: string[]) => Error | undefined): {
   const exec: Exec = async (command, args) => {
     calls.push([command, ...args].join(" "));
     const error = fail?.(args);
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   };
   return { exec, calls };
 }
