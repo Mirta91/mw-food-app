@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import type { CmsState } from "~/lib/cms/state";
+import type { Example } from "~/lib/cms/example";
 
-const { data: state } = await useFetch<CmsState>("/api/cms-state");
+const { data: example, error } = await useFetch<Example>("/api/example");
+if (error.value) {
+  throw createError({ ...error.value, fatal: true });
+}
 </script>
 
 <template>
-  <CmsStatus v-if="state" :state="state" />
+  <main v-if="example">
+    <h1>{{ example.title }}</h1>
+    <p>{{ example.body }}</p>
+  </main>
 </template>

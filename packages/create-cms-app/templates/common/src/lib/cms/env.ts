@@ -1,4 +1,17 @@
-// Called when the server starts, so a misconfigured deployment fails before it serves requests.
+// Called from each framework's startup hook. Frameworks log an error thrown there and keep serving,
+// so a missing variable ends the process explicitly.
+export function exitOnMissingEnv(
+  required: readonly string[],
+  env: Record<string, string | undefined>,
+): void {
+  try {
+    assertEnv(required, env);
+  } catch (error) {
+    console.error((error as Error).message);
+    process.exit(1);
+  }
+}
+
 export function assertEnv(
   required: readonly string[],
   env: Record<string, string | undefined>,

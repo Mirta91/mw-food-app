@@ -1,16 +1,10 @@
 import { requiredEnv } from "@/lib/cms/client";
-import { assertEnv } from "@/lib/cms/env";
+import { exitOnMissingEnv } from "@/lib/cms/env";
 
 // Runs once when the server starts. `next build` calls it as well, and the build must pass
-// without .env. Next only logs an error thrown here and keeps serving, so exit explicitly.
+// without .env.
 export function register(): void {
-  if (process.env.NEXT_PHASE === "phase-production-build") {
-    return;
-  }
-  try {
-    assertEnv(requiredEnv, process.env);
-  } catch (error) {
-    console.error((error as Error).message);
-    process.exit(1);
+  if (process.env.NEXT_PHASE !== "phase-production-build") {
+    exitOnMissingEnv(requiredEnv, process.env);
   }
 }
