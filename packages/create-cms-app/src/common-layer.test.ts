@@ -24,6 +24,7 @@ describe("common layer", () => {
       "playwright.config.ts",
       "pnpm-workspace.json",
       "scripts/check-docs.ts",
+      "scripts/smoke.ts",
       "src/lib/cms/env.ts",
       "src/lib/cms/example.ts",
       "src/lib/cms/state.ts",

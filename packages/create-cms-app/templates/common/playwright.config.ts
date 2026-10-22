@@ -4,7 +4,8 @@ import { defineConfig, devices } from "@playwright/test";
 try {
   process.loadEnvFile(".env");
 } catch {
-  // No .env: the app renders its "CMS not configured" state.
+  // No .env: the variables must come from the environment, or the app refuses to start.
+  // `pnpm test:smoke` (scripts/smoke.ts) checks them before it starts Playwright.
 }
 
 const port = Number(process.env.E2E_PORT ?? 4173);

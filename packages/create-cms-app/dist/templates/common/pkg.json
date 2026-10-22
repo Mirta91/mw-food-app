@@ -10,7 +10,7 @@
     "format:fix": "oxfmt",
     "test": "vitest run",
     "test:watch": "vitest --watch",
-    "test:smoke": "playwright test --grep @smoke",
+    "test:smoke": "node scripts/smoke.ts",
     "test:e2e": "playwright test",
     "check:docs": "node scripts/check-docs.ts",
     "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
