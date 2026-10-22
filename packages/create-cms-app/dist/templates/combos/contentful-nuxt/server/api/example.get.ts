@@ -1,7 +1,8 @@
 import { createExampleLoader } from "~/lib/cms/client";
+import { cmsRequest } from "../utils/cms-request";
 
 export default defineEventHandler(async () => {
-  const example = await createExampleLoader(process.env)();
+  const example = await cmsRequest(createExampleLoader(process.env));
   if (!example) {
     throw createError({ statusCode: 404, statusMessage: "No example content" });
   }

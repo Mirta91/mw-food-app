@@ -124,7 +124,7 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
       for (const entry of await entries()) {
         if (entry.kind === "file") {
           expect(entry.contents.toString("utf8"), entry.path).not.toMatch(
-            /describeCmsState|loadCmsState|CmsState|CmsStatus|data-cms-state/,
+            /describeCmsState|loadCmsState|CmsState|CmsStatus|data-cms-state|content states/,
           );
         }
       }

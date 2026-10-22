@@ -10,8 +10,8 @@
   runs the server without `pnpm start` skips the check.
 - When a coding agent runs `pnpm dev`, Astro starts the dev server in the background and writes
   its output, including startup errors, to `.astro/dev.log`.
-- Do not read CMS variables in `astro.config.ts` (integration options): it runs during
-  `pnpm build`, so a later `.env` change would be ignored.
+- Do not read CMS variables in `astro.config.ts` (integration options), apart from the dev-only
+  `check-env` integration: it runs during `pnpm build`, so a later `.env` change would be ignored.
 - `astro.config.ts` loads `.env` into `process.env` for `pnpm dev`. Restart `pnpm dev` after
   changing `.env`.
 - `pnpm start` serves `dist/server/entry.mjs` with `.env` loaded and listens on `PORT`.

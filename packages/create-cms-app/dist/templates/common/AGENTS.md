@@ -49,7 +49,7 @@ pnpm is enforced through `devEngines` and Node through `engines` in `package.jso
 | `pnpm format` / `pnpm format:fix` | Check or apply formatting with oxfmt                                       |
 | `pnpm check-types`                | Type-check the project                                                     |
 | `pnpm test` / `pnpm test:watch`   | Run the Vitest unit tests                                                  |
-| `pnpm test:smoke`                 | Run the Playwright tests tagged `@smoke`                                   |
+| `pnpm test:smoke`                 | Run the Playwright tests tagged `@smoke`; skipped without CMS variables    |
 | `pnpm test:e2e`                   | Run all Playwright tests                                                   |
 | `pnpm check:docs`                 | Check dead links, anchors and the instruction link rules                   |
 | `pnpm check`                      | Run lint, format, check-types, test, test:smoke and check:docs; pre-commit |
@@ -57,7 +57,7 @@ pnpm is enforced through `devEngines` and Node through `engines` in `package.jso
 ## Layout
 
 - `src/` — the app.
-- `src/lib/cms/` — the CMS client and the content states every route renders.
+- `src/lib/cms/` — the CMS client and the startup check of the required CMS variables.
 - `cms/` — schema as code, the example content type and migrations for the CMS.
 - `tests/unit/` — Vitest unit tests. `tests/e2e/` — Playwright tests.
 - `docs/instructions/` — instruction files (see rules above).
