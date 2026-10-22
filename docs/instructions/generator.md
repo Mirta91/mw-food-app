@@ -32,6 +32,10 @@ repository; there is no publish step.
 - The generator writes `package.json` in oxfmt's order: top-level keys by `PKG_KEY_ORDER` in
   `src/plan.ts`, dependency maps sorted by name. When a template adds another top-level key, add
   it to `PKG_KEY_ORDER` at oxfmt's position.
+- Generated servers check the required CMS variables (`requiredEnv`) when they start and exit
+  naming the missing ones; `pnpm build` and `pnpm check-types` must still pass without `.env`.
+  Routes render content only: missing content goes to the framework's 404, CMS errors to its
+  error page. The startup hook per framework is described in its `framework.md`.
 - Templates create CMS clients per request from runtime env. Do not use build-time framework
   integration options for CMS credentials, so `pnpm start` honours `.env`. Framework-specific
   details live in each `framework.md`.
@@ -50,8 +54,6 @@ repository; there is no publish step.
 - Fix templates, never a generated copy. `--keep` leaves the generated projects for inspection.
 - The matrix runs without CMS variables. Besides `pnpm check`, it requires `pnpm build` to pass
   and `pnpm dev` and `pnpm start` to exit with the missing-variables message.
-- Every route renders `data-cms-state` through `loadCmsState()` and `describeCmsState()` from
-  `src/lib/cms/state.ts`; the smoke test depends on it.
 - `src/matrix.test.ts` runs in `pnpm check` without network: it plans all combinations and checks
   required and forbidden files, `package.json` and docs. Update its snapshots with
   `pnpm --filter @cms-hackathon-setup/create-cms-app test -u` only after reviewing the diff.

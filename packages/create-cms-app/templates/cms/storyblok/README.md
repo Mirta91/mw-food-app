@@ -1,7 +1,7 @@
 # __PROJECT_NAME__
 
 A __FRAMEWORK__ app that loads its content from __CMS__. The home page renders an example
-story from the CMS, or a message that says what is missing.
+story from the CMS.
 
 ## Requirements
 
@@ -34,8 +34,9 @@ pnpm cms:migrate    # creates the example component and a published story
 pnpm dev
 ```
 
-Open the URL that `pnpm dev` prints. The page shows "Hello from Storyblok". Without `.env` it
-shows which variables are missing; with wrong values it shows the error from Storyblok.
+Open the URL that `pnpm dev` prints. The page shows "Hello from Storyblok". Without `.env`,
+`pnpm dev` and `pnpm start` stop and name the missing variables. With wrong values the page
+shows the framework's error page, and the error from Storyblok is in the server output.
 
 `pnpm cms:migrate` is safe to re-run. Components are schema as code in `cms/components/`,
 migrations in `cms/migrations/`.

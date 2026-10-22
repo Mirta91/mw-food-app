@@ -1,7 +1,7 @@
 # __PROJECT_NAME__
 
 A __FRAMEWORK__ app that loads its content from __CMS__. The home page renders an example
-entry from the CMS, or a message that says what is missing.
+entry from the CMS.
 
 ## Requirements
 
@@ -34,8 +34,9 @@ pnpm cms:migrate    # creates the example content type and a published entry
 pnpm dev
 ```
 
-Open the URL that `pnpm dev` prints. The page shows "Hello from Contentful". Without `.env` it
-shows which variables are missing; with wrong values it shows the error from Contentful.
+Open the URL that `pnpm dev` prints. The page shows "Hello from Contentful". Without `.env`,
+`pnpm dev` and `pnpm start` stop and name the missing variables. With wrong values the page
+shows the framework's error page, and the error from Contentful is in the server output.
 
 `pnpm cms:migrate` is safe to re-run. Content types are schema as code in `cms/content-types/`,
 migrations in `cms/migrations/`.

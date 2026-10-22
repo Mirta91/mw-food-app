@@ -20,6 +20,9 @@ Run once per CMS after changing a CMS layer, with a scratch space or project:
 2. Fill in every variable in `.env`, including the migration-only ones.
 3. Sanity: `pnpm exec sanity login`, then `pnpm cms:migrate`. Contentful and Storyblok:
    `pnpm cms:migrate`.
-4. `pnpm dev`, open the home page: it shows "Hello from <CMS>" (`data-cms-state="example"`).
-5. Break a token in `.env`, restart: the page shows "Could not load content from the CMS".
-6. Sanity only: `pnpm cms:dev` opens the Studio with the example document.
+4. `pnpm dev`, open the home page: it shows "Hello from <CMS>" with status 200.
+5. Break a token in `.env`, restart: the home page answers with the framework's error page
+   (status 500), and the CMS error is in the server output.
+6. Restore the token, unpublish or delete the example content: the home page answers with
+   status 404.
+7. Sanity only: `pnpm cms:dev` opens the Studio with the example document.

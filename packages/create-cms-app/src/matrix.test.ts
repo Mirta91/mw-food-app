@@ -25,11 +25,13 @@ const REQUIRED = [
   "playwright.config.ts",
   "pnpm-workspace.yaml",
   "scripts/check-docs.ts",
+  "scripts/smoke.ts",
   "src/lib/cms/client.ts",
-  "src/lib/cms/state.ts",
+  "src/lib/cms/env.ts",
+  "src/lib/cms/example.ts",
   "tests/e2e/smoke.spec.ts",
   "tests/unit/cms-client.test.ts",
-  "tests/unit/cms-state.test.ts",
+  "tests/unit/cms-env.test.ts",
   "tsconfig.json",
   "vitest.config.ts",
 ];
@@ -113,6 +115,16 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
         if (entry.kind === "file") {
           expect(entry.contents.toString("utf8"), entry.path).not.toMatch(
             /lychee|__PROJECT_NAME__|__CMS__|__FRAMEWORK__/i,
+          );
+        }
+      }
+    });
+
+    it("contains no CMS state machine", async () => {
+      for (const entry of await entries()) {
+        if (entry.kind === "file") {
+          expect(entry.contents.toString("utf8"), entry.path).not.toMatch(
+            /describeCmsState|loadCmsState|CmsState|CmsStatus|data-cms-state/,
           );
         }
       }

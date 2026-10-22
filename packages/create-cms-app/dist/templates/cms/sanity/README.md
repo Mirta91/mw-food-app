@@ -1,7 +1,7 @@
 # __PROJECT_NAME__
 
 A __FRAMEWORK__ app that loads its content from __CMS__. The home page renders an example
-document from the CMS, or a message that says what is missing.
+document from the CMS.
 
 ## Requirements
 
@@ -36,8 +36,9 @@ pnpm cms:migrate          # creates the example document
 pnpm dev
 ```
 
-Open the URL that `pnpm dev` prints. The page shows "Hello from Sanity". Without `.env` it shows
-which variables are missing; with wrong values it shows the error from Sanity.
+Open the URL that `pnpm dev` prints. The page shows "Hello from Sanity". Without `.env`,
+`pnpm dev` and `pnpm start` stop and name the missing variables. With wrong values the page
+shows the framework's error page, and the error from Sanity is in the server output.
 
 ## Sanity Studio
 
