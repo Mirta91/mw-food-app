@@ -1,6 +1,7 @@
 #!/bin/sh
-# Verifies that the committed bundle runs through npx and pnpm dlx from a git URL, and that a git
-# install packs only the bundle. Uses a bare clone of HEAD, so commit before running.
+# Verifies that the committed bundle runs through npx and pnpm dlx from a git URL without install
+# scripts, and that a git install packs only the bundle. Uses a bare clone of HEAD, so commit
+# before running.
 set -eu
 repo_root=$(git rev-parse --show-toplevel)
 work=$(mktemp -d)
@@ -37,6 +38,9 @@ for file in ${VERIFY_TEMPLATE_FILES:-}; do
   test -e "$pkg/packages/create-cms-app/dist/templates/$file" || { echo "FAIL template file not packed: $file"; exit 1; }
 done
 echo "ok   npm install packs only the bundle"
+lifecycle=$(node -e 'const s = require(process.argv[1]).scripts ?? {}; console.log(["preinstall", "install", "postinstall", "prepare"].filter((k) => k in s).join(" "))' "$PWD/$pkg/package.json")
+test -z "$lifecycle" || { echo "FAIL root package.json has install scripts: $lifecycle"; exit 1; }
+echo "ok   no install scripts"
 
 hooks_after=$(git -C "$repo_root" config --get core.hooksPath || true)
 test "$hooks_before" = "$hooks_after" || { echo "FAIL core.hooksPath changed"; exit 1; }

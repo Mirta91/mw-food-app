@@ -44,7 +44,8 @@ This is a pnpm workspace orchestrated by Turborepo.
 | Command                                       | Purpose                                                                                          |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `mise install`                                | Install pnpm and lychee                                                                          |
-| `pnpm install`                                | Install dependencies and activate the git hooks in `.githooks/`                                  |
+| `pnpm install`                                | Install dependencies                                                                             |
+| `pnpm setup:hooks`                            | Activate the git hooks in `.githooks/` (once per clone)                                          |
 | `pnpm build` / `dev` / `check-types` / `test` | Run the task in all packages through turbo                                                       |
 | `pnpm test:watch`                             | Run tests in watch mode                                                                          |
 | `pnpm lint` / `pnpm lint:fix`                 | Lint the whole repository with oxlint                                                            |
@@ -65,7 +66,7 @@ This is a pnpm workspace orchestrated by Turborepo.
 - `docs/instructions/` — instruction files (see rules above).
 - `docs/specs/<n>-<kebab-name>/task.md` — specs written by the `define-spec` skill.
 - `scripts/` — repository tooling.
-- `.githooks/` — versioned git hooks, activated through the `postinstall` script.
+- `.githooks/` — versioned git hooks, activated through `pnpm setup:hooks`.
 
 ## Conventions
 

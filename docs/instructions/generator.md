@@ -11,8 +11,10 @@ repository; there is no publish step.
   `pnpm build` and stage `dist/`; `pnpm check` fails while the bundle is stale or unstaged.
 - The bundle has no runtime dependencies. Add libraries the CLI imports as devDependencies; esbuild
   inlines them.
-- Do not add a `prepare` script to the root `package.json`. npm would install all dev
-  dependencies and run it on every `npx` call. Git hooks are activated in `postinstall`.
+- Do not add `prepare` or other install lifecycle scripts (`preinstall`, `install`,
+  `postinstall`) to the root `package.json`. npm would install all dev dependencies and run
+  `prepare` on every `npx` call, and npm and pnpm warn about ignored build scripts. Contributors
+  activate the git hooks once with `pnpm setup:hooks`.
 - After changing anything above, commit and run `pnpm verify:git-install`.
 
 ## Templates

@@ -9,9 +9,9 @@
   ],
   "type": "module",
   "scripts": {
-    "postinstall": "test -d .githooks && git config core.hooksPath .githooks || true",
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "setup:hooks": "git config core.hooksPath .githooks",
     "lint": "oxlint -c .oxlintrc.json",
     "lint:fix": "oxlint -c .oxlintrc.json --fix",
     "format": "oxfmt -c .oxfmtrc.json --check",

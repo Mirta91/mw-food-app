@@ -22,14 +22,17 @@ next steps. The generated project has its own `README.md` with setup steps for t
 
 More in the [generator README](packages/create-cms-app/README.md).
 
-## Work on the generator
+## Getting started
 
-Requires [mise](https://mise.jdx.dev).
+To work on the generator, you need [mise](https://mise.jdx.dev) and git.
 
 ```sh
-mise install   # pnpm and lychee
-pnpm install   # dependencies and git hooks
-pnpm check     # lint, format, types, tests, build and docs checks
+git clone https://github.com/um2115/cms-fe-scaffolding.git
+cd cms-fe-scaffolding
+mise install       # pnpm and lychee
+pnpm install       # dependencies
+pnpm setup:hooks   # activate the pre-commit hook, once per clone
+pnpm check         # lint, format, types, tests, build and docs checks
 ```
 
 `pnpm check` also runs as the pre-commit hook. The generator bundle in

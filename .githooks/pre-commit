@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs all checks (lint, format, types, tests, docs) before every commit. Installed through `pnpm install` (postinstall script).
+# Runs all checks (lint, format, types, tests, docs) before every commit. Activated through `pnpm setup:hooks`.
 # Uses mise when available so lychee is on PATH even in git clients without shell activation.
 if command -v mise >/dev/null 2>&1; then
   exec mise exec -- pnpm check
