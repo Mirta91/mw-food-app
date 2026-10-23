@@ -69,7 +69,8 @@ This is a pnpm workspace orchestrated by Turborepo.
 
 ## Conventions
 
-None yet.
+- `README.md` is for people: what the project is, how to use it, how to start contributing. It
+  links to `AGENTS.md` for everything else and does not link instruction files (rule 4).
 
 ## Definition of done
 
