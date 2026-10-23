@@ -213,7 +213,7 @@ test("home page renders the example @smoke", async ({ page }) => {
 - [ ] **Step 4: Update repository tests**
 
 Add `scripts/smoke.ts` to `src/common-layer.test.ts`. Run
-`pnpm --filter @cms-hackathon-setup/create-cms-app test -u`, review that the snapshot diff only
+`pnpm --filter @cms-fe-scaffolding/create-cms-app test -u`, review that the snapshot diff only
 changes `test:smoke`.
 
 - [ ] **Step 5: Verify**
@@ -378,7 +378,7 @@ If `pnpm dev` or `pnpm start` keeps running after `register()` throws, catch in 
       checks the variables through the integration in `astro.config.ts` and `pnpm start` through
       `scripts/check-env.ts`, and that a deployment that does not use `pnpm start` skips the check.
 
-- [ ] **Step 5: Snapshot** — `pnpm --filter @cms-hackathon-setup/create-cms-app test -u`; diff
+- [ ] **Step 5: Snapshot** — `pnpm --filter @cms-fe-scaffolding/create-cms-app test -u`; diff
       changes only the Astro `start` scripts.
 
 - [ ] **Step 6: Verify** — `pnpm build && pnpm check`, then
@@ -415,7 +415,7 @@ it("contains no CMS state machine", async () => {
 });
 ```
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`. Expected: FAIL on `state.ts`.
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`. Expected: FAIL on `state.ts`.
 
 - [ ] **Step 2: Delete** `state.ts` and `cms-state.test.ts`; in `REQUIRED` replace
       `src/lib/cms/state.ts` and `tests/unit/cms-state.test.ts` with `src/lib/cms/env.ts`,

@@ -1,4 +1,4 @@
-# cms-hackathon-setup
+# cms-fe-scaffolding
 
 Home of **create-cms-app**, a generator for agent-ready CMS projects used at hackathons. It
 scaffolds a single-package TypeScript project for Sanity, Contentful or Storyblok with Next.js,

@@ -115,7 +115,7 @@ directory. Confirm that a package `turbo.json` with `"extends": ["//"]` can over
 
 ```json
 {
-  "name": "@cms-hackathon-setup/create-cms-app",
+  "name": "@cms-fe-scaffolding/create-cms-app",
   "private": true,
   "type": "module",
   "scripts": {
@@ -311,9 +311,9 @@ expect_tty_error "pnpm dlx" pnpm dlx "$url"
 mkdir install && cd install
 npm init -y >/dev/null
 npm install --no-audit --no-fund "$url" >/dev/null
-pkg=node_modules/cms-hackathon-setup
+pkg=node_modules/cms-fe-scaffolding
 test -x "$pkg/packages/create-cms-app/dist/cli.mjs" || { echo "FAIL bundle missing or not executable"; exit 1; }
-extra=$(ls node_modules | grep -v -e '^cms-hackathon-setup$' -e '^\.' || true)
+extra=$(ls node_modules | grep -v -e '^cms-fe-scaffolding$' -e '^\.' || true)
 test -z "$extra" || { echo "FAIL npm installed other packages: $extra"; exit 1; }
 for file in ${VERIFY_TEMPLATE_FILES:-}; do
   test -e "$pkg/packages/create-cms-app/dist/templates/$file" || { echo "FAIL template file not packed: $file"; exit 1; }
@@ -329,7 +329,7 @@ echo "ok   git config untouched"
 
 Run: `pnpm install && pnpm build && pnpm build`
 Expected: install succeeds without `ERR_PNPM_IGNORED_BUILDS`; second build reports
-`FULL TURBO` for `@cms-hackathon-setup/create-cms-app#build`; `git config core.hooksPath` prints
+`FULL TURBO` for `@cms-fe-scaffolding/create-cms-app#build`; `git config core.hooksPath` prints
 `.githooks`.
 
 Run: `pnpm check:bundle`
@@ -457,7 +457,7 @@ describe("combos", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, cannot resolve `./choices.ts`.
 
 - [ ] **Step 3: Implement**
@@ -522,7 +522,7 @@ export function validateProjectName(name: string | undefined): string | undefine
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -741,7 +741,7 @@ describe("planProject", () => {
 
 - [ ] **Step 3: Run tests to verify they fail**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, cannot resolve `./layers.ts` / `./plan.ts`.
 
 - [ ] **Step 4: Implement `layers.ts`**
@@ -921,8 +921,8 @@ export async function planProject(templatesDir: string, choices: Choices): Promi
 
 - [ ] **Step 6: Run tests to verify they pass**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
-Expected: PASS. Then `pnpm --filter @cms-hackathon-setup/create-cms-app check-types`: PASS.
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
+Expected: PASS. Then `pnpm --filter @cms-fe-scaffolding/create-cms-app check-types`: PASS.
 
 - [ ] **Step 7: Document the layer rules**
 
@@ -1055,7 +1055,7 @@ describe("writeProject", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, cannot resolve `./write.ts`.
 
 - [ ] **Step 3: Implement**
@@ -1147,7 +1147,7 @@ export async function writeProject(
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test && pnpm --filter @cms-hackathon-setup/create-cms-app check-types`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test && pnpm --filter @cms-fe-scaffolding/create-cms-app check-types`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1250,7 +1250,7 @@ describe("initRepository", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, cannot resolve `./git.ts`.
 
 - [ ] **Step 3: Implement**
@@ -1298,7 +1298,7 @@ export async function initRepository(dir: string, exec: Exec = execFileExec): Pr
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test && pnpm --filter @cms-hackathon-setup/create-cms-app check-types`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test && pnpm --filter @cms-fe-scaffolding/create-cms-app check-types`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1598,7 +1598,7 @@ describe("run", () => {
 
 - [ ] **Step 3: Run tests to verify they fail**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, cannot resolve `./cli.ts` (prompts tests pass already).
 
 - [ ] **Step 4: Implement `generate.ts`, `cli.ts`, `paths.ts`, `main.ts`**
@@ -1741,7 +1741,7 @@ try {
 
 - [ ] **Step 5: Run tests and type check**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test && pnpm --filter @cms-hackathon-setup/create-cms-app check-types`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test && pnpm --filter @cms-fe-scaffolding/create-cms-app check-types`
 Expected: PASS.
 
 - [ ] **Step 6: Rebuild and try the bundle by hand**
@@ -1896,7 +1896,7 @@ describe("headingSlugs", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, cannot resolve `../templates/common/scripts/check-docs.ts`.
 
 - [ ] **Step 3: Implement**
@@ -2082,7 +2082,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test && pnpm --filter @cms-hackathon-setup/create-cms-app check-types`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test && pnpm --filter @cms-fe-scaffolding/create-cms-app check-types`
 Expected: PASS. Fix expected line numbers in the test only if the fixture text changed.
 
 - [ ] **Step 5: Commit**
@@ -2187,7 +2187,7 @@ describe("common layer", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: FAIL, `common` directory missing.
 
 - [ ] **Step 3: Create the layer files**
@@ -2623,7 +2623,7 @@ Delete `packages/create-cms-app/templates/.gitkeep`.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `chmod 755 packages/create-cms-app/templates/common/.githooks/pre-commit && pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `chmod 755 packages/create-cms-app/templates/common/.githooks/pre-commit && pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -2826,7 +2826,7 @@ Add to `packages/create-cms-app/package.json` scripts: `"test:matrix": "node scr
 Add to root `package.json` scripts: `"test:matrix": "node packages/create-cms-app/scripts/test-matrix.ts"`
 (direct, so flags like `--keep` reach the script without a second pnpm layer).
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app check-types`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app check-types`
 Expected: PASS.
 
 Run: `pnpm test:matrix sanity-next`
@@ -4767,7 +4767,7 @@ describe.each(allCombos().map((combo) => ({ ...combo, id: comboId(combo) })))(
 
 - [ ] **Step 2: Run it**
 
-Run: `pnpm --filter @cms-hackathon-setup/create-cms-app test`
+Run: `pnpm --filter @cms-fe-scaffolding/create-cms-app test`
 Expected: PASS and 12 snapshots written. If a combo fails, fix its templates and re-run
 `pnpm test:matrix <combo>` for it.
 
@@ -4826,7 +4826,7 @@ Append to `docs/instructions/generator.md` under "Matrix test":
 ```md
 - `src/matrix.test.ts` runs in `pnpm check` without network: it plans all combinations and checks
   required and forbidden files, `package.json` and docs. Update its snapshots with
-  `pnpm --filter @cms-hackathon-setup/create-cms-app test -u` only after reviewing the diff.
+  `pnpm --filter @cms-fe-scaffolding/create-cms-app test -u` only after reviewing the diff.
 - After changing a CMS layer, run the manual check in the generator README for that CMS.
 ```
 

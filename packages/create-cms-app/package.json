@@ -1,5 +1,5 @@
 {
-  "name": "@cms-hackathon-setup/create-cms-app",
+  "name": "@cms-fe-scaffolding/create-cms-app",
   "private": true,
   "type": "module",
   "scripts": {

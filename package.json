@@ -1,5 +1,5 @@
 {
-  "name": "cms-hackathon-setup",
+  "name": "cms-fe-scaffolding",
   "private": true,
   "bin": {
     "create-cms-app": "packages/create-cms-app/dist/cli.mjs"

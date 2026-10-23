@@ -59,5 +59,5 @@ repository; there is no publish step.
   and `pnpm dev` and `pnpm start` to exit with the missing-variables message.
 - `src/matrix.test.ts` runs in `pnpm check` without network: it plans all combinations and checks
   required and forbidden files, `package.json` and docs. Update its snapshots with
-  `pnpm --filter @cms-hackathon-setup/create-cms-app test -u` only after reviewing the diff.
+  `pnpm --filter @cms-fe-scaffolding/create-cms-app test -u` only after reviewing the diff.
 - After changing a CMS layer, run the manual check in the generator README for that CMS.

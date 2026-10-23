@@ -29,9 +29,9 @@ expect_tty_error "pnpm dlx" pnpm dlx "$url"
 mkdir install && cd install
 npm init -y >/dev/null
 npm install --no-audit --no-fund "$url" >/dev/null
-pkg=node_modules/cms-hackathon-setup
+pkg=node_modules/cms-fe-scaffolding
 test -x "$pkg/packages/create-cms-app/dist/cli.mjs" || { echo "FAIL bundle missing or not executable"; exit 1; }
-extra=$(ls node_modules | grep -v -e '^cms-hackathon-setup$' -e '^\.' || true)
+extra=$(ls node_modules | grep -v -e '^cms-fe-scaffolding$' -e '^\.' || true)
 test -z "$extra" || { echo "FAIL npm installed other packages: $extra"; exit 1; }
 for file in ${VERIFY_TEMPLATE_FILES:-}; do
   test -e "$pkg/packages/create-cms-app/dist/templates/$file" || { echo "FAIL template file not packed: $file"; exit 1; }
