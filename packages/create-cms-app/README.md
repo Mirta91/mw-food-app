@@ -4,9 +4,9 @@ Scaffolds a single-package TypeScript project for Sanity, Contentful or Storyblo
 Nuxt, Astro or SvelteKit.
 
 ```sh
-npx --yes git+<repository-url>
+npx --yes git+https://github.com/um2115/cms-fe-scaffolding.git
 # or
-pnpm dlx git+<repository-url>
+pnpm dlx git+https://github.com/um2115/cms-fe-scaffolding.git
 ```
 
 Answer the prompts (project name, CMS, framework), confirm the summary, then follow the printed

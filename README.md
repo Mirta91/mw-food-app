@@ -9,10 +9,13 @@ Nuxt, Astro or SvelteKit, including `AGENTS.md`, instruction files and checks fo
 Requires Node.js 24 or later.
 
 ```sh
-npx --yes git+<repository-url>
+npx --yes git+https://github.com/um2115/cms-fe-scaffolding.git
 # or
-pnpm dlx git+<repository-url>
+pnpm dlx git+https://github.com/um2115/cms-fe-scaffolding.git
 ```
+
+Run it in the directory that should contain the new project folder. To run a specific branch,
+tag or commit, append it to the URL, for example `...cms-fe-scaffolding.git#main`.
 
 Answer the prompts (project name, CMS, framework), confirm the summary, then follow the printed
 next steps. The generated project has its own `README.md` with setup steps for the chosen CMS.
