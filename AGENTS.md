@@ -94,3 +94,4 @@ user. If an item cannot be met, say which one and why instead of reporting the s
 - [Testing](docs/instructions/testing.md) — before writing, running or configuring tests
 - [Linting and formatting](docs/instructions/linting-and-formatting.md) — before changing lint or
   format rules, or when a lint or format check fails
+- [Deployment](docs/instructions/deployment.md) — before deploying or changing the Vercel setup

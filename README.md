@@ -71,6 +71,11 @@ The full setup per platform (Contentful web app, local machine) is in
 
 [AGENTS.md](AGENTS.md) lists every command.
 
+## Deployment
+
+The app runs on Vercel. `docs/instructions/deployment.md` describes the setup and the deploy
+commands.
+
 ## Working with coding agents
 
 [AGENTS.md](AGENTS.md) (also available as `CLAUDE.md`) is the entry point for coding agents. It

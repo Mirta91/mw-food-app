@@ -18,4 +18,5 @@
   the `cms-env` plugin for `pnpm dev` (`vite dev` runs `init` only on the first request).
 - Do not read CMS variables in `vite.config.ts` outside the dev-only `cms-env` plugin: the config
   also runs during `pnpm build`, so a later `.env` change would be ignored.
-- `pnpm start` serves `build/` with the Node adapter, `.env` loaded, listening on `PORT`.
+- `pnpm start` serves `build/` with the Node adapter, `.env` loaded, listening on `PORT`. Vercel
+  builds use the Vercel adapter instead; see the deployment instructions.
