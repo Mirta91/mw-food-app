@@ -1,0 +1,54 @@
+{
+  "name": "mw-food-app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:smoke": "node scripts/smoke.ts",
+    "test:e2e": "playwright test",
+    "check:docs": "node scripts/check-docs.ts",
+    "check": "pnpm lint && pnpm format && pnpm check-types && pnpm test && pnpm test:smoke && pnpm check:docs",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "dev": "vite dev",
+    "build": "vite build",
+    "start": "node --env-file-if-exists=.env build",
+    "check-types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts"
+  },
+  "dependencies": {
+    "contentful": "11.12.10"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@sveltejs/adapter-node": "6.0.0",
+    "@sveltejs/kit": "3.0.1",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@types/node": "24.19.1",
+    "contentful-management": "12.19.0",
+    "contentful-migration": "5.1.1",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.6",
+    "typescript": "6.0.3",
+    "vite": "8.3.3",
+    "vitest": "5.0.3"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.28.9",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.28.9"
+}

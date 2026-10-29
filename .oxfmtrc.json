@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ".next/**",
+    ".nuxt/**",
+    ".output/**",
+    ".astro/**",
+    ".svelte-kit/**",
+    "dist/**",
+    "build/**",
+    "cms/.sanity/**",
+    "cms/dist/**",
+    "playwright-report/**",
+    "test-results/**"
+  ]
+}
