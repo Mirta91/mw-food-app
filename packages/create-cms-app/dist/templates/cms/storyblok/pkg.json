@@ -1,8 +1,0 @@
-{
-  "scripts": {
-    "cms:migrate": "node --env-file-if-exists=.env cms/migrate.ts"
-  },
-  "dependencies": {
-    "storyblok-js-client": "7.7.7"
-  }
-}

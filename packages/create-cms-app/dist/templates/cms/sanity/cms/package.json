@@ -1,8 +1,0 @@
-{
-  "name": "__PROJECT_NAME__-cms",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "styled-components": "6.5.3"
-  }
-}

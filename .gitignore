@@ -1,7 +1,0 @@
-node_modules/
-.DS_Store
-.turbo/
-dist/
-!packages/create-cms-app/dist/
-.next/
-/.claude/settings.json

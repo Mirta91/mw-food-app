@@ -1,4 +1,0 @@
-#!/bin/sh
-# Runs all checks before every commit. Activated by `pnpm install` through the prepare script.
-echo "pre-commit: running pnpm check"
-exec pnpm check
