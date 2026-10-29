@@ -33,7 +33,8 @@ These rules stay in this file. Do not move them into an instruction file.
 
 ## Project
 
-mw-food-app is a SvelteKit app that loads its content from Contentful.
+mw-food-app is the Lunch Finder: a SvelteKit app that helps employees find lunch near their
+office, with offices, restaurants and food options maintained in Contentful.
 
 ## Tools and commands
 
@@ -58,11 +59,13 @@ pnpm is enforced through `devEngines` and Node through `engines` in `package.jso
 
 - `src/` — the app.
 - `src/lib/cms/` — the CMS client (`client.ts`) and one query module per content type.
+- `src/lib/components/` — Svelte components used by the pages.
 - `src/lib/utils/` — helpers that are not specific to the CMS, such as the environment check and
   `once()`. Put new shared helpers here, not in `src/lib/cms/`.
-- `cms/` — schema as code, the example content type and migrations for the CMS.
+- `cms/` — schema as code, migrations and demo content for the CMS (`pnpm cms:migrate`).
 - `tests/unit/` — Vitest unit tests. `tests/e2e/` — Playwright tests.
 - `docs/instructions/` — instruction files (see rules above).
+- `docs/agents/plans/` — implementation plans.
 - `scripts/` — project tooling.
 - `.githooks/` — versioned git hooks, activated through the `prepare` script.
 

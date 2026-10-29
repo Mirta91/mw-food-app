@@ -1,8 +1,16 @@
 # Contentful
 
-- Content types are schema as code in `cms/content-types/`. Change them only through a new
-  migration in `cms/migrations/<nnn>-<name>.ts` and call it from `cms/migrate.ts`. The check
-  that the example content type already exists belongs to migration 001.
+- Content types are schema as code in `cms/content-types/`, one `ContentTypeDefinition` per
+  type. Change them only through a new migration in `cms/migrations/<nnn>-<name>.ts`, and keep
+  the definition equal to the result. A migration that creates a type is
+  `createContentTypeMigration(definition)`.
+- Register each migration as a step in `cms/migrate.ts`. Its `isApplied` check must detect the
+  migration's result in the space, so re-runs skip it. The team space has hand-made types, so
+  002–004 skip there and 005 adds what they lacked.
+- After the migrations, `cms/seed.ts` creates and publishes the missing demo content from
+  `cms/demo-data.ts`. It never changes existing entries: food options are matched by slug,
+  offices by city, restaurants by fixed entry ID. A deleted demo restaurant comes back on the
+  next run.
 - `pnpm cms:migrate` needs `CONTENTFUL_SPACE_ID` and `CONTENTFUL_MANAGEMENT_TOKEN` in `.env`.
   It is safe to re-run.
 - `getClient()` in `src/lib/cms/client.ts` creates the SDK client with the delivery token from

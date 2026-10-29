@@ -1,9 +1,19 @@
-// Creates the example content type and one published example entry. Safe to re-run.
+// Applies the pending migrations and creates the missing demo content. Safe to re-run.
 // Run: pnpm cms:migrate
 import { createClient } from "contentful-management";
-import { runMigration } from "contentful-migration";
-import { exampleContentType } from "./content-types/example.ts";
-import migration from "./migrations/001-create-example.ts";
+import { type MigrationFunction, runMigration } from "contentful-migration";
+import migration002 from "./migrations/002-create-food-option.ts";
+import migration003 from "./migrations/003-create-office.ts";
+import migration004 from "./migrations/004-create-restaurant.ts";
+import migration005 from "./migrations/005-align-restaurant-and-food-option.ts";
+import { seedDemoContent } from "./seed.ts";
+
+// One migration and how to tell that a space already has its result.
+type Step = {
+  name: string;
+  migration: MigrationFunction;
+  isApplied: () => Promise<boolean>;
+};
 
 const required = ["CONTENTFUL_SPACE_ID", "CONTENTFUL_MANAGEMENT_TOKEN"];
 const missing = required.filter((name) => !process.env[name]?.trim());
@@ -20,37 +30,62 @@ const client = createClient(
   { type: "plain", defaults: { spaceId, environmentId } },
 );
 
-const exists = await client.contentType
-  .get({ contentTypeId: exampleContentType.id })
-  .then(() => true)
-  .catch(() => false);
-if (exists) {
-  console.log(`Content type ${exampleContentType.id} exists, skipping migration.`);
-} else {
+const steps: Step[] = [
+  {
+    name: "002-create-food-option",
+    migration: migration002,
+    isApplied: () => contentTypeExists("foodOption"),
+  },
+  {
+    name: "003-create-office",
+    migration: migration003,
+    isApplied: () => contentTypeExists("office"),
+  },
+  {
+    name: "004-create-restaurant",
+    migration: migration004,
+    isApplied: () => contentTypeExists("restaurant"),
+  },
+  {
+    name: "005-align-restaurant-and-food-option",
+    migration: migration005,
+    isApplied: () => hasField("restaurant", "emoji"),
+  },
+];
+
+for (const step of steps) {
+  if (await step.isApplied()) {
+    console.log(`${step.name}: already applied, skipping.`);
+    continue;
+  }
   await runMigration({
-    migrationFunction: migration,
+    migrationFunction: step.migration,
     spaceId,
     environmentId,
     accessToken,
     yes: true,
   });
+  console.log(`${step.name}: applied.`);
 }
 
-const entries = await client.entry.getMany({
-  query: { content_type: exampleContentType.id, limit: 1 },
-});
-if (entries.items.length === 0) {
+const created = await seedDemoContent(client, await defaultLocale());
+console.log(`Created and published ${created} demo entries.`);
+
+async function contentTypeExists(contentTypeId: string): Promise<boolean> {
+  return client.contentType
+    .get({ contentTypeId })
+    .then(() => true)
+    .catch(() => false);
+}
+
+async function hasField(contentTypeId: string, fieldId: string): Promise<boolean> {
+  return client.contentType
+    .get({ contentTypeId })
+    .then((type) => type.fields.some((field) => field.id === fieldId))
+    .catch(() => false);
+}
+
+async function defaultLocale(): Promise<string> {
   const locales = await client.locale.getMany({});
-  const locale = locales.items.find((item) => item.default)?.code ?? "en-US";
-  const entry = await client.entry.create(
-    { contentTypeId: exampleContentType.id },
-    {
-      fields: {
-        title: { [locale]: "Hello from Contentful" },
-        body: { [locale]: "This entry was created by cms/migrate.ts." },
-      },
-    },
-  );
-  await client.entry.publish({ entryId: entry.sys.id }, entry);
-  console.log("Created and published the example entry.");
+  return locales.items.find((item) => item.default)?.code ?? "en-US";
 }

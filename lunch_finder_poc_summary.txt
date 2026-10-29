@@ -1,0 +1,100 @@
+LUNCH FINDER - HACKATHON POC SUMMARY
+====================================
+
+IDEA
+Build a simple web app that helps employees find places to eat near their office. Contentful is the headless CMS where office and restaurant data is maintained. The app (mw-food-app, SvelteKit) reads published content through Contentful's Content Delivery API on the server.
+
+CORE POC FEATURES
+- Select an office (e.g., Valencia or Munich).
+- Browse restaurants associated with that office.
+- Filter by one food option at a time ("All" or e.g. vegetarian, vegan, fish, meat) and maximum average price (slider from 5 EUR to 30 EUR or the highest price, default 20 EUR). Cuisine is shown on each row but not filtered for now.
+- View restaurant details by clicking a row (opens inline): description, image, address, distance from the office, food options, price, and takeaway availability. Each row shows the image, or the restaurant's emoji when there is no image.
+- "Surprise Me!" button randomly picks a restaurant from the filtered results and opens it.
+- The selected office is in the URL (?office=<entry ID>); the first office (by creation date) is the default.
+- Open the restaurant in Google Maps (googleMapsUrl if set, otherwise a link built from the coordinates).
+- Optionally calculate distance from the office using coordinates.
+
+CONTENTFUL DATA MODEL
+Content Type IDs: office, restaurant, foodOption.
+The Contentful API type of each field is given in brackets; the schema-as-code files use these names.
+
+1) Office (id: office, display field: name)
+Field ID        Type                                Required
+name            Short text [Symbol]                 Yes
+city            Short text [Symbol]                 Yes
+address         Short text [Symbol]                 Yes
+coordinates     Location [Location]                 Yes
+
+2) Restaurant (id: restaurant, display field: name)
+Field ID        Type                                                    Required
+name            Short text [Symbol]                                     Yes
+description     Long text [Text]                                        No
+office          Reference -> Office [Link Entry, validation: office]    Yes
+address         Short text [Symbol]                                     Yes
+coordinates     Location [Location]                                     Yes
+cuisine         Short text [Symbol]                                     Yes
+foodOptions     Multiple references -> Food Option
+                [Array of Link Entry, validation: foodOption]           Yes
+averagePrice    Decimal number [Number]                                 Yes
+image           Media [Link Asset]                                      No
+googleMapsUrl   Short text [Symbol]                                     No
+takeaway        Boolean [Boolean]                                       No
+emoji           Short text [Symbol]                                     No
+
+3) Food Option (id: foodOption, display field: name)
+Field ID        Type                                Required
+name            Short text [Symbol]                 Yes
+slug            Short text [Symbol, unique]         Yes
+
+Initial Food Option entries:
+- Vegetarian / vegetarian
+- Vegan / vegan
+- Fish / fish
+- Meat / meat
+
+RELATIONSHIPS
+- An Office can be referenced by many Restaurants.
+- A Restaurant references one Office and multiple Food Options.
+- For this POC, each Restaurant is associated with one Office. This can be extended later if needed.
+
+TECHNICAL APPROACH (matches the existing project setup)
+- Contentful: manage offices, restaurants, food options and images.
+- Frontend: SvelteKit 3 + Svelte 5 with TypeScript, served by the Node adapter (pnpm dev / pnpm build / pnpm start). Node 24+, pnpm 11.
+- Content types are schema as code: one file per content type in cms/content-types/ (office.ts, restaurant.ts, food-option.ts), created through new migrations in cms/migrations/ (002-create-food-option, 003-create-office, 004-create-restaurant - referenced types first) and called from cms/migrate.ts. Run with pnpm cms:migrate; it must stay safe to re-run.
+- Data access: one query module per content type in src/lib/cms/ (office.ts, restaurant.ts, food-option.ts), using getClient() from src/lib/cms/client.ts. Fetch restaurants with include depth so the office and food option references are resolved in one request.
+- Data is loaded in +page.server.ts, so the Delivery API token stays on the server and is never sent to the browser. Use error(404, ...) when, for example, an office does not exist.
+- Filtering and random selection ("Surprise Me!"): done in the Svelte page on the data the server load returns (or via URL search params handled in the load function).
+- Distance: calculated from office/restaurant coordinates with a helper in src/lib/utils/; do not store a fixed distance.
+- No separate backend: the SvelteKit server is the only server needed for the read-only POC.
+- Contentful image URLs start with "//"; prefix "https:" and use Contentful image parameters (e.g. ?w=600) for sizing.
+- The existing "example" content type and home page are scaffolding; replace the home page with the Lunch Finder.
+- Tests: unit tests per query module in tests/unit/cms-<content-type>.test.ts with a mocked SDK, plus tests for the distance helper. Smoke tests (Playwright, tagged @smoke) assert on status and page structure, not on CMS content. pnpm check must pass before a task counts as done.
+
+INITIAL DEMO DATA
+- 2 offices: Valencia and Munich.
+- 10-15 sample restaurant entries.
+- Ensure restaurants have multiple food options where relevant.
+- Use consistent field IDs because the frontend depends on them.
+- The 4 food options (and optionally the demo offices/restaurants) can be created and published by pnpm cms:migrate, like the example entry today, so every team member's space gets the same data. Restaurants and images can also be added by hand in the Contentful web app.
+
+WORKING IN PARALLEL / ACCESS
+- Partner creates the Contentful space and invites other team members for CMS access.
+- Content types are created by pnpm cms:migrate (not by hand in the web app), so the schema in the repo and in Contentful stay identical. Sample entries can be created by hand or by the migrate script, and must be published.
+- Copy .env.example to .env and fill in:
+  * CONTENTFUL_SPACE_ID - Settings / API keys / Space ID
+  * CONTENTFUL_ACCESS_TOKEN - Content Delivery API access token (read-only), same API key
+  * CONTENTFUL_ENVIRONMENT - optional, defaults to 'master'
+  * CONTENTFUL_MANAGEMENT_TOKEN - only for pnpm cms:migrate (personal access token, Settings / CMA tokens); never used by the app
+- Without the required variables, pnpm dev and pnpm start stop and name the missing ones.
+- .env is not committed; share the values with the team privately.
+- The Delivery API token is only used on the server, so it is not visible to users. Still, only publish content meant to be shown in the app.
+- When a restaurant is added or updated and published in Contentful, the app shows it on the next page load without a code change or redeploy (pages are loaded on the server on each request; there is no cache layer).
+
+FUTURE IDEAS (OUT OF SCOPE)
+- Team lunch voting (requires vote storage).
+- Daily lunch menus (new content type).
+- Favorites and ratings (require user data storage).
+- Map view of all restaurants.
+
+SUCCESS CRITERIA
+Show that non-developers can update restaurant content in Contentful and that the Lunch Finder app displays the published changes, with working office, food-type and budget filters.

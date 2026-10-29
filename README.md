@@ -1,7 +1,8 @@
 # mw-food-app
 
-A SvelteKit app that loads its content from Contentful. The home page renders an example
-entry from the CMS.
+The Lunch Finder: a SvelteKit app that helps employees find lunch near their office. Pick an
+office, filter by food option and maximum price, open a restaurant's details or let
+"Surprise Me!" pick one. Offices, restaurants and food options are maintained in Contentful.
 
 ## Requirements
 
@@ -19,7 +20,7 @@ The short version. Each step is explained in [Getting started](#getting-started)
 2. `pnpm install`
 3. `pnpm exec playwright install` (once per machine)
 4. `cp .env.example .env` and fill in the Contentful values
-5. `pnpm cms:migrate` to create the example content in your space
+5. `pnpm cms:migrate` to create the content types and demo content in your space
 6. `pnpm dev` and open the URL it prints
 
 ## Getting started
@@ -39,19 +40,25 @@ Fill in `.env`:
 | `CONTENTFUL_ENVIRONMENT`      | Optional. The environment to read from; empty means `master`                                                |
 | `CONTENTFUL_MANAGEMENT_TOKEN` | Only for `pnpm cms:migrate`. Settings → CMA tokens → create a personal access token. Keep it out of the app |
 
-Create the example content and start the app:
+Create the content and start the app:
 
 ```sh
-pnpm cms:migrate    # creates the example content type and a published entry
+pnpm cms:migrate    # creates or updates the content types and adds the missing demo content
 pnpm dev
 ```
 
-Open the URL that `pnpm dev` prints. The page shows "Hello from Contentful". Without `.env`,
+Open the URL that `pnpm dev` prints. The page shows the Lunch Finder for the first office.
+Without `.env`,
 `pnpm dev` and `pnpm start` stop and name the missing variables. With wrong values the page
 shows the framework's error page, and the error from Contentful is in the server output.
 
-`pnpm cms:migrate` is safe to re-run. Content types are schema as code in `cms/content-types/`,
-migrations in `cms/migrations/`.
+`pnpm cms:migrate` is safe to re-run and never changes entries that already exist. Content types
+are schema as code in `cms/content-types/`, migrations in `cms/migrations/`, demo content in
+`cms/demo-data.ts`. Edit restaurants, offices and food options in the Contentful web app and
+publish them; the app shows the change on the next page load.
+
+The full setup per platform (Contentful web app, local machine) is in
+`docs/agents/plans/2026-10-29-lunch-finder.md`, section "Platform Checklist".
 
 ## Commands
 
@@ -59,7 +66,7 @@ migrations in `cms/migrations/`.
 | ------------------ | ------------------------------------------------------------ |
 | `pnpm dev`         | Start the development server                                 |
 | `pnpm build`       | Build for production; `pnpm start` serves the build          |
-| `pnpm cms:migrate` | Create the example content type and entry                    |
+| `pnpm cms:migrate` | Create the content types and the missing demo content        |
 | `pnpm check`       | Run all checks: lint, format, types, tests, smoke test, docs |
 
 [AGENTS.md](AGENTS.md) lists every command.

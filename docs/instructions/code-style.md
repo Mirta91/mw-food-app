@@ -38,5 +38,6 @@ Code that runs while the module loads keeps the order it needs:
 
 ## Imports
 
-- Scripts in `scripts/` run in Node without a bundler. In them, and in every module they import
-  (such as `src/lib/cms/client.ts`), write relative imports with the `.ts` extension.
+- Scripts in `scripts/` and `cms/` run in Node without a bundler. In them, and in every module
+  they import (such as `src/lib/cms/client.ts`), write relative imports with the `.ts` extension
+  and import types with `import type`.
