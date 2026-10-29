@@ -1,7 +1,8 @@
 # Deployment
 
-The app is deployed to Vercel with the Vercel CLI from a local checkout. Preview and production
-deployments are not tied to GitHub; `vercel` deploys the working tree.
+The app is deployed to Vercel with the Vercel CLI from a local checkout; the GitHub repository
+is not connected. `vercel` deploys the working tree. Production is
+<https://mw-food-app.vercel.app>, project `mw-food-app` in the team `mirtas-projects-0a5aa125`.
 
 - `vite.config.ts` picks `@sveltejs/adapter-vercel` when `VERCEL` is set (Vercel sets it in every
   build) and `@sveltejs/adapter-node` otherwise, so `pnpm start` and the Playwright web server keep
@@ -25,10 +26,13 @@ pnpm dlx vercel link          # pick the existing project, or create one named m
 ## Deploy
 
 ```sh
-pnpm check                    # the definition of done also applies to deployments
-pnpm dlx vercel               # preview deployment with its own URL
-pnpm dlx vercel --prod        # production deployment
+pnpm check                       # the definition of done also applies to deployments
+pnpm dlx vercel --target preview # preview deployment with its own URL
+pnpm dlx vercel --prod           # production deployment
 ```
+
+On `main`, plain `pnpm dlx vercel` also deploys to production (CLI 65), so pass `--target preview`
+for a preview.
 
 To change an environment variable use `pnpm dlx vercel env add <NAME>` (or the project settings)
 and deploy again; running functions do not pick up changes.
