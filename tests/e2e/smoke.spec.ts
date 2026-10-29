@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("home page renders the example @smoke", async ({ page }) => {
+test("home page renders the restaurant list @smoke", async ({ page }) => {
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
   await expect(page.locator("main h1")).toBeVisible();
